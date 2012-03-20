@@ -44,8 +44,6 @@ $(document).ready(function() {
     // Default fields to hide
     //-----------------------
 
-    $('#theme_wizard_nav_next').hide();
-
     $('#subscription_field').hide();
 
     $('#registration_loading_box').show();
@@ -55,6 +53,11 @@ $(document).ready(function() {
     reg_default_name = $('#system_name').val();
     if ($('#registration_type').val() == 0)
         $('#system_field').hide();
+
+    $('#theme_wizard_nav_next').hide();
+    $('#wizard_nav_next').click(function(){
+        window.location = '/app/registration/wizard_redirect';
+    });
 
     // Get SDN and Registration info
     //------------------------------
