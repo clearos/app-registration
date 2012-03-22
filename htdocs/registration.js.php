@@ -71,8 +71,10 @@ $(document).ready(function() {
     $('#registration_type').change(function(event) {
         if ($('#registration_type').val() > 0) {
             $('#system_field').show();
+            $('#system').after('<input type=\'hidden\' id=\'validate_system\' name=\'validate_system\' value=\'1\'>');
         } else {
             $('#system_field').hide();
+            $('#validate_system').remove();
         }
         get_registration_info();
         check_system_info();
@@ -164,10 +166,13 @@ function get_sdn_info() {
                     $('#sdn_form_username_label').html('" . lang('registration_account') . " (' + data.sdn_org + ')');
                     $('#register').val('" . lang('registration_register_system') . "');
                 }
-                if (data.supported != undefined && data.supported)
+                if (data.supported != undefined && data.supported) {
                     $('#subscription_field').show();
-                else
+                    $('#subscription').after('<input type=\'hidden\' id=\'validate_subscription\' name=\'validate_subscription\' value=\'1\'>');
+                } else {
                     $('#subscription_field').hide();
+                    $('#validate_subscription').remove();
+                }
             } else if ($(location).attr('href').match('.*registration$') != null) {
                 get_system_info();
             }
@@ -188,10 +193,10 @@ function get_registration_info() {
     if (reg_info_ok || $('#sdn_form_username').val() == '' || $('#sdn_form_password').val() == '')
         return;
 
+    $('#system').hide();
     $('#loading-systems').remove();
     $('#subscription').hide();
     $('#loading-subscriptions').remove();
-    $('#system').hide();
     $('#system').after(
         '<div class=\'theme-loading-normal\' id=\'loading-systems\' style=\'padding-top: 0;\'>" . lang('registration_get_system_list') . "</div>'
     );

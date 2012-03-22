@@ -406,7 +406,7 @@ class Registration extends Rest
     {
         clearos_profile(__METHOD__, __LINE__);
 
-        if (! preg_match("/^[A-Za-z0-9\.\- ]+$/", $sdn_username))
+        if (! preg_match("/^[A-Za-z0-9]+$/", $sdn_username))
             return lang('registration_sdn_username_is_invalid');
         if (strlen($sdn_username) < 4)
             return lang('registration_sdn_username_min_length') . ' (4).';
@@ -424,7 +424,7 @@ class Registration extends Rest
     {
         clearos_profile(__METHOD__, __LINE__);
 
-        if (! preg_match("/^[A-Za-z0-9\\!\\@\\#\\$\\%\\^\\*\\(\\)-_\\.\\?]+$/", $sdn_password))
+        if (! preg_match("/^[A-Za-z0-9\\!\\@\\#\\$\\%\\^\\*\\(\\)\\-\\_\\&]+$/", $sdn_password))
             return lang('registration_sdn_password_is_invalid');
         if (strlen($sdn_password) < 4)
             return lang('registration_sdn_password_min_length') . ' (4).';
