@@ -71,9 +71,11 @@ $(document).ready(function() {
     $('#registration_type').change(function(event) {
         if ($('#registration_type').val() > 0) {
             $('#system_field').show();
+            $('#validate_system_name').remove();
             $('#system').after('<input type=\'hidden\' id=\'validate_system\' name=\'validate_system\' value=\'1\'>');
         } else {
             $('#system_field').hide();
+            $('#system_name').after('<input type=\'hidden\' id=\'validate_system_name\' name=\'validate_system_name\' value=\'1\'>');
             $('#validate_system').remove();
         }
         get_registration_info();
@@ -216,6 +218,7 @@ function get_registration_info() {
                 $('#loading-subscriptions').removeClass('theme-loading-normal');
                 return;
             } else if (data.code < 0) {
+                $('#registration_warning_box').show();
                 $('#registration_warning').html(data.errmsg);
                 return;
             }
@@ -255,7 +258,6 @@ function get_registration_info() {
                 $('#registration_warning_box').show();
                 $('#registration_warning').html(xhr.responseText.toString());
             }
-            $('#sidebar_setting_status').html('---');
         }
     });
 }
@@ -268,14 +270,6 @@ function get_system_info() {
         return;
     }
 
-    if ($(location).attr('href').match('.*registration$') != null) {
-        $('tbody', $('#sidebar_summary_table')).append(
-            '<tr>' +
-            '  <td><b>" . lang('base_settings') . "<\\/b><\\/td>' +
-            '  <td id=\\'sidebar_setting_status\\'><div class=\\'theme-loading-small\\'></div></td>' +
-            '<\\/tr>'
-        );
-    }
     $.ajax({
         type: 'POST',
         dataType: 'json',
@@ -288,7 +282,9 @@ function get_system_info() {
                     window.location = '/app/registration/register';
                     return;
                 }
-                $('#sidebar_setting_status').html(data.errmsg);
+                $('#registration_loading_box').hide();
+                $('#registration_warning_box').show();
+                $('#registration_warning').html(data.errmsg);
                 return;
             } else if (data.code < 0) {
                 $('#registration_loading_box').hide();
@@ -296,7 +292,6 @@ function get_system_info() {
                 $('#registration_warning').html(xhr.responseText.toString());
                 return;
             }
-            $('#sidebar_setting_status').html('" . lang('base_ok') . "');
             $('#system_name_text').html(data.system_name);
             if (data.reseller != undefined) {
                 $('#reseller_field').show();
@@ -327,9 +322,10 @@ function get_system_info() {
         },
         error: function(xhr, text, err) {
             // Don't display any errors if ajax request was aborted due to page redirect/reload
-            if (xhr['abort'] == undefined)
-                clearos_dialog_box('errmsg', '" . lang('base_warning') . "', xhr.responseText.toString());
-            $('#sidebar_setting_status').html('---');
+            if (xhr['abort'] == undefined) {
+                $('#registration_warning_box').show();
+                $('#registration_warning').html(xhr.responseText.toString());
+            }
         }
     });
 }
@@ -357,7 +353,7 @@ function check_system_info() {
         $('#system').attr('disabled', false);
         $('#system_name').attr('disabled', true);
         if ($('#system').val() == 0)
-            $('#system_name').val(reg_default_name);
+            $('#system_name').val('');
         else
             $('#system_name').val(my_systems[$('#system').val()].name);
         // If subscription req'd...list only ones that are unassigned if system upgrade does not already have a license
@@ -383,6 +379,7 @@ function check_system_info() {
             $('#subscription').attr('disabled', true);
         }
     } else {
+        $('#system_name').val(reg_default_name);
         // If subscription req'd...list only ones that are unassigned
         if ($('#subscription_field').is(':visible')) {
             $('#subscription')
@@ -443,9 +440,10 @@ function check_username_availability() {
         },
         error: function(xhr, text, err) {
             // Don't display any errors if ajax request was aborted due to page redirect/reload
-            if (xhr['abort'] == undefined)
-                clearos_dialog_box('errmsg', '" . lang('base_warning') . "', xhr.responseText.toString());
-            $('#sidebar_setting_status').html('---');
+            if (xhr['abort'] == undefined) {
+                $('#registration_warning_box').show();
+                $('#registration_warning').html(xhr.responseText.toString());
+            }
         }
     });
 }

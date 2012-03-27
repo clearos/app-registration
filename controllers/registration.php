@@ -71,7 +71,7 @@ class Registration extends ClearOS_Controller
         $this->load->library('network/Hostname');
 
         $data['vendor'] = $this->session->userdata['sdn_org'];
-        $data['system_name'] = preg_replace('/\..*/', '', $this->hostname->get());
+        $data['system_name'] = ucfirst(preg_replace('/\..*/', '', strtolower($this->hostname->get())));
 
         if ($this->input->post('reset'))
             redirect('/registration');
@@ -82,7 +82,8 @@ class Registration extends ClearOS_Controller
         $this->form_validation->set_policy('sdn_form_username', 'registration/Registration', 'validate_sdn_username', TRUE);
         $this->form_validation->set_policy('sdn_form_password', 'registration/Registration', 'validate_sdn_password', TRUE);
         $this->form_validation->set_policy('registration_type', 'registration/Registration', 'validate_registration_type', TRUE);
-        $this->form_validation->set_policy('system_name', 'registration/Registration', 'validate_system_name', TRUE);
+        $validate_system_name = ($this->input->post('validate_system_name')) === FALSE ? FALSE : TRUE;
+        $this->form_validation->set_policy('system_name', 'registration/Registration', 'validate_system_name', $validate_system_name);
         $validate_system = ($this->input->post('validate_system')) === FALSE ? FALSE : TRUE;
         $this->form_validation->set_policy('system', 'registration/Registration', 'validate_system', $validate_system);
         $validate_subscription = ($this->input->post('validate_subscription')) === FALSE ? FALSE : TRUE;

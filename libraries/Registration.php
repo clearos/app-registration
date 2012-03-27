@@ -141,6 +141,7 @@ class Registration extends Rest
                 $file = new File(self::FILE_REGISTERED_FLAG);
                 if (!$file->exists())
                     $file->create('root', 'root', '0644');
+                $this->delete_cache();
             }
 
             return $result;
@@ -328,6 +329,7 @@ class Registration extends Rest
         try {
             $suva = new Suva();
             $suva->reset_hostkey();
+            $this->delete_cache();
         } catch (Exception $e) {
             throw new Engine_Exception(clearos_exception_message($e), CLEAROS_ERROR);
         }
