@@ -34,7 +34,7 @@ header('Content-Type: application/x-javascript');
 
 echo "
 var reg_info_ok = false;
-var reg_default_name = '" . lang('base_name') . "';
+var reg_default_name = '" . lang('registration_my_server') . "';
 var my_systems = new Array();
 var my_subscriptions = new Array();
 var eval_request = -1;
@@ -97,6 +97,7 @@ $(document).ready(function() {
             // Dump info about subscription
             $('#subscription_details').remove();
             $('#sidebar_summary_table').parent().append('<div id=\'subscription_details\'</div>');
+console.log(my_subscriptions[$('#subscription').val()]);
             $('#subscription_details').html('<h3>" . lang('registration_subscription_details') . "</h3>' +
                 '<table width=\'100%\'>' +
                 '<tr>' +
@@ -241,6 +242,7 @@ function get_registration_info() {
                     description: description,
                     purchased: data.subscriptions[index].purchased,
                     url: data.subscriptions[index].url,
+                    evaluation: data.subscriptions[index].evaluation
                 };
                 $('#subscription').append( new Option(data.subscriptions[index].description, data.subscriptions[index].id)); }
             for (index = 0; index < data.systems.length; index++) {
@@ -343,7 +345,9 @@ function check_system_info() {
         if (my_systems[$('#system').val()].supported) {
             $('#subscription').attr('disabled', true);
             $('#subscription').val(0);
+            $('#validate_subscription').remove();
         } else {
+            $('#subscription').after('<input type=\'hidden\' id=\'validate_subscription\' name=\'validate_subscription\' value=\'1\'>');
             $('#subscription').attr('disabled', false);
         }
     }
