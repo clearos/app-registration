@@ -97,7 +97,6 @@ $(document).ready(function() {
             // Dump info about subscription
             $('#subscription_details').remove();
             $('#sidebar_summary_table').parent().append('<div id=\'subscription_details\'</div>');
-console.log(my_subscriptions[$('#subscription').val()]);
             $('#subscription_details').html('<h3>" . lang('registration_subscription_details') . "</h3>' +
                 '<table width=\'100%\'>' +
                 '<tr>' +
