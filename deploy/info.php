@@ -24,7 +24,7 @@ $app['inline_help'] =  array(
 
 $app['name'] = lang('registration_app_name');
 $app['category'] = lang('base_category_system');
-$app['subcategory'] = lang('base_subcategory_settings');
+$app['subcategory'] = lang('base_subcategory_operating_system');
 
 /////////////////////////////////////////////////////////////////////////////
 // Packaging
