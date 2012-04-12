@@ -13,10 +13,6 @@ $app['license'] = 'Proprietary';
 $app['license_core'] = 'LGPLv3';
 $app['description'] = lang('registration_app_description');
 $app['tooltip'] = lang('registration_app_tooltip');
-$app['inline_help'] =  array(
-    lang('registration_registering') => lang('registration_registering_help'),
-    lang('registration_creating_an_account') => lang('registration_creating_an_account_help'),
-);
 
 /////////////////////////////////////////////////////////////////////////////
 // App name and categories
@@ -25,6 +21,14 @@ $app['inline_help'] =  array(
 $app['name'] = lang('registration_app_name');
 $app['category'] = lang('base_category_system');
 $app['subcategory'] = lang('base_subcategory_operating_system');
+
+// Wizard extras
+$app['controllers']['registration']['wizard_name'] = lang('registration_app_name');
+$app['controllers']['registration']['wizard_description'] = lang('registration_app_description');
+$app['controllers']['registration']['inline_help'] = array(
+    lang('registration_registering') => lang('registration_registering_help'),
+    lang('registration_creating_an_account') => lang('registration_creating_an_account_help'),
+);
 
 /////////////////////////////////////////////////////////////////////////////
 // Packaging
