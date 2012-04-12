@@ -1,6 +1,6 @@
 <?php
 
-$lang['registration_app_description'] = 'System registration provides access to the Marketplace - a place where you will find the latest apps and software updates.  Creating an account and registering your system is quick and easy.';
+$lang['registration_app_description'] = 'System registration provides access to the Marketplace - a place where you will find the latest apps.  Creating an account and registering your system is quick and easy.';
 $lang['registration_app_name'] = 'System Registration';
 $lang['registration_system_name'] = 'System Name';
 $lang['registration_registration'] = 'System Registration';
