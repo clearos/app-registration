@@ -1,0 +1,3 @@
+#!/bin/sh
+
+[ -f /var/clearos/registration/registered ] && rm -f /var/clearos/registration/registered
