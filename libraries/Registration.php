@@ -326,13 +326,14 @@ class Registration extends Rest
     {
         clearos_profile(__METHOD__, __LINE__);
             
-        try {
-            $suva = new Suva();
-            $suva->reset_hostkey();
-            $this->delete_cache();
-        } catch (Exception $e) {
-            throw new Engine_Exception(clearos_exception_message($e), CLEAROS_ERROR);
-        }
+        $suva = new Suva();
+        $suva->reset_hostkey();
+        $this->delete_cache();
+
+        $file = new File(self::FILE_REGISTERED_FLAG);
+
+        if ($file->exists())
+            $file->delete();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
