@@ -141,12 +141,13 @@ class Registration extends Rest
                 $file = new File(self::FILE_REGISTERED_FLAG);
                 if (!$file->exists())
                     $file->create('root', 'root', '0644');
-                $this->delete_cache();
 
                 // FIXME: add wc-yum feature to get rid of this workaround
                 $repo = new File('/etc/yum.repos.d/clearos-professional.repo');
                 if ($repo->exists())
                     $repo->delete();
+
+                $this->delete_cache();
             }
             return $result;
         } catch (Exception $e) {
