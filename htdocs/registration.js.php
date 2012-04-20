@@ -95,27 +95,7 @@ $(document).ready(function() {
             return true;
         } else {
             // Dump info about subscription
-            $('#subscription_details').remove();
-            $('#sidebar_summary_table').parent().append('<div id=\'subscription_details\'</div>');
-            $('#subscription_details').html('<h3>" . lang('registration_subscription_details') . "</h3>' +
-                '<table width=\'100%\'>' +
-                '<tr>' +
-                '<td width=\'65\' valign=\'top\'><b>" . lang('base_description') . "</b></td>' +
-                '<td>' + my_subscriptions[$('#subscription').val()].description + '</td>' +
-                '</tr>' +
-                '<tr>' +
-                '<td valign=\'top\'><b>" . lang('registration_serial_number') . "</b></td>' +
-                '<td>' + my_subscriptions[$('#subscription').val()].serial_number + '</td>' +
-                '</tr>' +
-                '<tr>' +
-                '<td valign=\'top\'><b>" . lang('registration_expiry') . "</b></td>' +
-                '<td>' + $.datepicker.formatDate('MM d, yy', new Date(my_subscriptions[$('#subscription').val()].expire)) + '</td>' +
-                '</tr>' + (my_subscriptions[$('#subscription').val()].evaluation == false ? '' : 
-                '<tr>' +
-                '<td valign=\'top\'><b>" . lang('registration_type') . "</b></td>' +
-                '<td>" . lang('registration_evaluation') . "</td>' +
-                '</tr>')
-            );
+            display_subscription_info();
         }
     });
 
@@ -140,6 +120,38 @@ $(document).ready(function() {
         sdn_terms_of_service();
     });
 });
+
+/**
+ * Displays subcription info.
+ *
+ * @return JSON SDN information
+ */
+
+function display_subscription_info() {
+    $('#subscription_details').remove();
+    if ($('#subscription').val() == 0)
+    return;
+    $('#sidebar_summary_table').parent().append('<div id=\'subscription_details\'</div>');
+    $('#subscription_details').html('<h3>" . lang('registration_subscription_details') . "</h3>' +
+    '<table width=\'100%\'>' +
+    '<tr>' +
+    '<td width=\'65\' valign=\'top\'><b>" . lang('base_description') . "</b></td>' +
+    '<td>' + my_subscriptions[$('#subscription').val()].description + '</td>' +
+    '</tr>' +
+    '<tr>' +
+    '<td valign=\'top\'><b>" . lang('registration_serial_number') . "</b></td>' +
+    '<td>' + my_subscriptions[$('#subscription').val()].serial_number + '</td>' +
+    '</tr>' +
+    '<tr>' +
+    '<td valign=\'top\'><b>" . lang('registration_expiry') . "</b></td>' +
+    '<td>' + $.datepicker.formatDate('MM d, yy', new Date(my_subscriptions[$('#subscription').val()].expire)) + '</td>' +
+    '</tr>' + (my_subscriptions[$('#subscription').val()].evaluation == false ? '' : 
+    '<tr>' +
+    '<td valign=\'top\'><b>" . lang('registration_type') . "</b></td>' +
+    '<td>" . lang('registration_evaluation') . "</td>' +
+    '</tr>')
+    );
+}
 
 /**
  * Returns information from the SDN.
@@ -246,6 +258,7 @@ function get_registration_info() {
                 $('#subscription').append( new Option(data.subscriptions[index].description, data.subscriptions[index].id)); }
             for (index = 0; index < data.systems.length; index++) {
                 my_systems[data.systems[index].id] = {
+                    subscription_id: data.systems[index].subscription_id,
                     name: data.systems[index].name, supported: data.systems[index].supported
                 };
                 $('#system').append( new Option(data.systems[index].name, data.systems[index].id));
@@ -340,44 +353,53 @@ function check_system_info() {
     if ($('#system').val() == 0) {
         $('#subscription').attr('disabled', false);
         $('#system_name').attr('disabled', false);
-    } else {
-        if (my_systems[$('#system').val()].supported) {
-            $('#subscription').attr('disabled', true);
-            $('#subscription').val(0);
-            $('#validate_subscription').remove();
-        } else {
-            $('#subscription').after('<input type=\'hidden\' id=\'validate_subscription\' name=\'validate_subscription\' value=\'1\'>');
-            $('#subscription').attr('disabled', false);
-        }
     }
+
     // If an upgrade/re-install, disable system name...it is inherited from previously registered system reg
     if ($('#registration_type').val() > 0) {
         $('#system').show();
         $('#system').attr('disabled', false);
+        // Disable name field...it be inherited
         $('#system_name').attr('disabled', true);
         if ($('#system').val() == 0)
             $('#system_name').val('');
         else
             $('#system_name').val(my_systems[$('#system').val()].name);
+
         // If subscription req'd...list only ones that are unassigned if system upgrade does not already have a license
         if ($('#subscription_field').is(':visible')) {
+            // Remove all options from list
             $('#subscription')
                 .find('option')
                 .remove()
                 .end()
             ;
+            if ($('#system').val() != 0 && my_systems[$('#system').val()].supported) {
+                // Subscription is inherted from upgrade/reinstall
+
+                // Add inherited
+                $('#subscription').append(
+                new Option(my_subscriptions[my_systems[$('#system').val()].subscription_id].description,
+                my_systems[$('#system').val()].subscription_id)
+                    );
+
+                // Update display
+                display_subscription_info();
+                // Exit function
+                return;
+            }
             // Add back 'Select' default
             $('#subscription option[value=\'0\']').remove();
             $('#subscription').append( new Option('" . lang('base_select') . "', 0));
             for (id in my_subscriptions) {
+                // If no system has been selected, don't list any
                 if ($('#system').val() == 0)
-                    continue;
-                if (my_systems[$('#system').val()].supported)
                     continue;
                 if (!my_subscriptions[id].assigned) {
                     $('#subscription').append( new Option(my_subscriptions[id].description, id));
                 }
             }
+            $('#subscription').attr('disabled', false);
         } else {
             $('#subscription').attr('disabled', true);
         }
@@ -414,6 +436,7 @@ function check_system_info() {
                 $('#system_name').val(my_systems[id].name + ' (' + Math.floor(Math.random() * 100) + ')');
         }
     }
+    display_subscription_info();
 }
 
 function check_username_availability() {
