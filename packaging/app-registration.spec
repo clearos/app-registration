@@ -1,7 +1,7 @@
 
 Name: app-registration
 Epoch: 1
-Version: 1.1.1
+Version: 1.1.2
 Release: 1%{dist}
 Summary: System Registration
 License: Proprietary
@@ -15,7 +15,7 @@ Requires: app-base
 System registration provides access to the Marketplace - a place where you will find the latest apps.  Creating an account and registering your system is quick and easy.
 
 %package core
-Summary: System Registration - APIs and install
+Summary: System Registration - Core
 License: LGPLv3
 Group: ClearOS/Libraries
 Requires: app-base-core
@@ -36,6 +36,11 @@ cp -r * %{buildroot}/usr/clearos/apps/registration/
 
 install -d -m 755 %{buildroot}/var/clearos/registration
 install -D -m 0644 packaging/registration.conf %{buildroot}/etc/clearos/registration.conf
+
+if [ -d %{buildroot}/usr/clearos/apps/registration/libraries_zendguard ]; then
+    rm -rf %{buildroot}/usr/clearos/apps/registration/libraries
+    mv %{buildroot}/usr/clearos/apps/registration/libraries_zendguard %{buildroot}/usr/clearos/apps/registration/libraries
+fi
 
 %post
 logger -p local6.notice -t installer 'app-registration - installing'
