@@ -119,6 +119,12 @@ $(document).ready(function() {
         e.preventDefault();
         sdn_terms_of_service();
     });
+
+    $('#refresh').click(function (e) {
+        e.preventDefault();
+        $('#registration_warning_box').hide();
+        get_registration_info();
+    });
 });
 
 /**
@@ -130,8 +136,13 @@ $(document).ready(function() {
 function display_subscription_info() {
     $('#subscription_details').remove();
     if ($('#subscription').val() == 0)
-    return;
-    $('#sidebar_summary_table').parent().append('<div id=\'subscription_details\'</div>');
+        return;
+    // If sidebar_summary does not exist, use wizard container
+    if ($('#sidebar_summary_table').length == 0)
+       $('#theme-sidebar-container').append('<div id=\'subscription_details\'</div>');
+    else
+       $('#sidebar_summary_table').parent().append('<div id=\'subscription_details\'</div>');
+
     $('#subscription_details').html('<h3>" . lang('registration_subscription_details') . "</h3>' +
     '<table width=\'100%\'>' +
     '<tr>' +
@@ -174,7 +185,7 @@ function get_sdn_info() {
                 }
             }
 
-            if ($(location).attr('href').match('.*registration\/register($|#$)') != null) {
+            if ($(location).attr('href').match('.*registration\/register($|.*$)') != null) {
                 // Add SDN organization to differentiate the expected account information
                 if (data.sdn_org != undefined) {
                     $('#sdn_form_username_label').html('" . lang('registration_account') . " (' + data.sdn_org + ')');
@@ -204,7 +215,7 @@ function get_sdn_info() {
  */
 
 function get_registration_info() {
-    if (reg_info_ok || $('#sdn_form_username').val() == '' || $('#sdn_form_password').val() == '')
+    if ($('#sdn_form_username').val() == '' || $('#sdn_form_password').val() == '')
         return;
 
     $('#system').hide();
@@ -212,10 +223,10 @@ function get_registration_info() {
     $('#subscription').hide();
     $('#loading-subscriptions').remove();
     $('#system').after(
-        '<div class=\'theme-loading-normal\' id=\'loading-systems\' style=\'padding-top: 0;\'>" . lang('registration_get_system_list') . "</div>'
+        '<div class=\'theme-loading-small\' id=\'loading-systems\' style=\'padding-top: 0;\'>" . lang('registration_get_system_list') . "</div>'
     );
     $('#subscription').after(
-        '<div class=\'theme-loading-normal\' id=\'loading-subscriptions\' style=\'padding-top: 0;\'>" . lang('registration_get_subscription_list') . "</div>'
+        '<div class=\'theme-loading-small\' id=\'loading-subscriptions\' style=\'padding-top: 0;\'>" . lang('registration_get_subscription_list') . "</div>'
     );
     $.ajax({
         type: 'POST',
@@ -225,13 +236,15 @@ function get_registration_info() {
         success: function(data) {
             if (data.code > 0) {
                 $('#loading-systems').html(data.errmsg);
-                $('#loading-systems').removeClass('theme-loading-normal');
+                $('#loading-systems').removeClass('theme-loading-small');
                 $('#loading-subscriptions').html(data.errmsg);
-                $('#loading-subscriptions').removeClass('theme-loading-normal');
+                $('#loading-subscriptions').removeClass('theme-loading-small');
+                reg_info_ok = false;
                 return;
             } else if (data.code < 0) {
                 $('#registration_warning_box').show();
                 $('#registration_warning').html(data.errmsg);
+                reg_info_ok = false;
                 return;
             }
 
@@ -240,6 +253,8 @@ function get_registration_info() {
             $('#loading-subscriptions').remove();
             $('#subscription').show();
 
+            my_systems.length = 0;
+            my_subscriptions.length = 0;
             for (index = 0; index < data.subscriptions.length; index++) {
                 var description = data.subscriptions[index].description;
                 if (data.subscriptions[index].id == eval_request)
@@ -255,7 +270,14 @@ function get_registration_info() {
                     url: data.subscriptions[index].url,
                     evaluation: data.subscriptions[index].evaluation
                 };
-                $('#subscription').append( new Option(data.subscriptions[index].description, data.subscriptions[index].id)); }
+                //$('#subscription').append( new Option(data.subscriptions[index].description, data.subscriptions[index].id));
+            }
+            $('#system')
+                .find('option')
+                .remove()
+                .end()
+            ;
+            $('#system').append( new Option('" . lang('base_select') . "', 0));
             for (index = 0; index < data.systems.length; index++) {
                 my_systems[data.systems[index].id] = {
                     subscription_id: data.systems[index].subscription_id,
@@ -357,7 +379,7 @@ function check_system_info() {
 
     // If an upgrade/re-install, disable system name...it is inherited from previously registered system reg
     if ($('#registration_type').val() > 0) {
-        $('#system').show();
+        //$('#system').show(); TODO - Need this?
         $('#system').attr('disabled', false);
         // Disable name field...it be inherited
         $('#system_name').attr('disabled', true);
@@ -379,9 +401,9 @@ function check_system_info() {
 
                 // Add inherited
                 $('#subscription').append(
-                new Option(my_subscriptions[my_systems[$('#system').val()].subscription_id].description,
-                my_systems[$('#system').val()].subscription_id)
-                    );
+                    new Option(my_subscriptions[my_systems[$('#system').val()].subscription_id].description,
+                    my_systems[$('#system').val()].subscription_id)
+                );
 
                 // Update display
                 display_subscription_info();
@@ -443,7 +465,7 @@ function check_username_availability() {
     var username = $('#new_account_username').val();
     $('#new_account_username').hide();
     $('#checking_username').remove();
-    $('#new_account_username').after('<div class=\'theme-loading-normal\' id=\'checking_username\' style=\'padding-top: 0;\'>" . lang('registration_checking_username_availability') . "</div>');
+    $('#new_account_username').after('<div class=\'theme-loading-small\' id=\'checking_username\' style=\'padding-top: 0;\'>" . lang('registration_checking_username_availability') . "</div>');
     $.ajax({
         type: 'POST',
         dataType: 'json',
@@ -453,12 +475,12 @@ function check_username_availability() {
             if (data.code == 0) {
                 $('#new_account_username').show();
                 $('#checking_username').html('');
-                $('#checking_username').removeClass('theme-loading-normal');
+                $('#checking_username').removeClass('theme-loading-small');
                 $('#checking_username').addClass('form-input-ok');
             } else if (data.code > 0) {
                 $('#new_account_username').show();
                 $('#checking_username').html('');
-                $('#checking_username').removeClass('theme-loading-normal');
+                $('#checking_username').removeClass('theme-loading-small');
                 $('#checking_username').addClass('form-input-fail');
             } else if (data.code < 0) {
                 clearos_dialog_box('errmsg', '" . lang('base_warning') . "', data.errmsg);
@@ -478,7 +500,7 @@ function sdn_terms_of_service() {
     $('#sdn_terms_of_service_dialog').remove();
     $('#theme-page-container').append('<div id=\"sdn_terms_of_service_dialog\" title=\"" . lang('registration_terms_of_service') . "\">' +
         '<div id=\'tos-text\' style=\'margin-top: 100;\'>' +
-        '  <div class=\'theme-loading-normal\' id=\'tos-loading\'>" . lang('base_loading') . "</div>' +
+        '  <div class=\'theme-loading-small\' id=\'tos-loading\'>" . lang('base_loading') . "</div>' +
         '</div>' +
       '</div>'
     );

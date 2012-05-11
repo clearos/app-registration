@@ -98,6 +98,7 @@ class Create_Account extends ClearOS_Controller
         // Load view data
         //---------------
 
+        $data['mailer'] = TRUE;
         $data['country'] = 'US';
         $data['country_options'] = $this->registration->get_country_options();
 

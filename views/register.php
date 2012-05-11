@@ -39,6 +39,7 @@ echo "</div>";
 
 $buttons = array(
     form_submit_custom('register', lang('registration_register_system'), 'high', array('id' => 'register')), 
+    form_submit_custom('refresh', lang('registration_refresh_form'), 'high', array('id' => 'refresh')), 
 );
 
 // Don't show "create account" if one was just created

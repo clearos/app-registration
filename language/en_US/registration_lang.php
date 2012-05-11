@@ -10,6 +10,7 @@ $lang['registration_registered'] = 'Registered';
 $lang['registration_reseller'] = 'Value Added Reseller';
 $lang['registration_account'] = 'Account';
 $lang['registration_my_server'] = 'My Server';
+$lang['registration_refresh_form'] = 'Refresh Form';
 $lang['registration_register_system'] = 'Register System';
 $lang['registration_sdn_username_is_invalid'] = 'Username contains invalid characters.';
 $lang['registration_sdn_username_min_length'] = 'Username does not contain minimum number of characters';
