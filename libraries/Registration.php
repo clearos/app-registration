@@ -142,11 +142,6 @@ class Registration extends Rest
                 if (!$file->exists())
                     $file->create('root', 'root', '0644');
 
-                // FIXME: add wc-yum feature to get rid of this workaround
-                $repo = new File('/etc/yum.repos.d/clearos-professional.repo');
-                if ($repo->exists())
-                    $repo->delete();
-
                 $this->delete_cache();
             }
             return $result;
