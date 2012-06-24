@@ -215,7 +215,7 @@ function get_sdn_info() {
  */
 
 function get_registration_info() {
-    if ($('#sdn_form_username').val() == '' || $('#sdn_form_password').val() == '')
+    if ($('#sdn_form_username').val() == undefined || $('#sdn_form_username').val() == '' || $('#sdn_form_password').val() == '')
         return;
 
     $('#system').hide();
