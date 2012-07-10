@@ -145,8 +145,8 @@ class Registration extends ClearOS_Controller
         clearos_load_language('registration');
 
         $this->registration->reset();
-        $this->page->set_message(lang('registration_reset') . '<span style=\'padding: 5 0 5 10;\'>' . anchor_ok('/app/registration') . '</span>', 'info');
-        $this->index(true);
+        $this->page->set_message(lang('registration_reset') . '<span style=\'padding: 5px 0px 5px 10px;\'>' . anchor_ok('/app/registration') . '</span>', 'info');
+        $this->index(TRUE);
     }
 
     /**

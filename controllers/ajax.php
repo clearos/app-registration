@@ -137,7 +137,14 @@ class Ajax extends ClearOS_Controller
 
         try {
             $this->load->library('registration/Registration');
-            echo $this->registration->get_sdn_info(TRUE);
+            $result = $this->registration->get_sdn_info(TRUE);
+            $response = json_decode($result);
+            // Better sync up local registation status
+            if ($response->code == 0 && $response->device_id > 0)
+                $this->registration->set_local_registration_status(TRUE);
+            elseif ($response->code == 0 && $response->device_id <= 0)
+                $this->registration->set_local_registration_status(FALSE);
+            echo $result;
         } catch (Exception $e) {
             echo json_encode(Array('code' => clearos_exception_code($e), 'errmsg' => clearos_exception_message($e)));
         }

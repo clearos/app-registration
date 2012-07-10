@@ -88,6 +88,8 @@ class Registration extends Rest
     const FOLDER_REGISTRATION = '/var/clearos/registration';
     const REGISTER_NEW = 0;
     const REGISTER_EXISTING = 1;
+    const CODE_SYSTEM_REGISTERED = 0;
+    const CODE_SYSTEM_NOT_REGISTERED = 3;
 
     ///////////////////////////////////////////////////////////////////////////////
     // V A R I A B L E S
@@ -138,10 +140,7 @@ class Registration extends Rest
             if ($response->code == 0) {
                 $suva = new Suva();
                 $suva->set_device_name($response->device_id);
-                $file = new File(self::FILE_REGISTERED_FLAG);
-                if (!$file->exists())
-                    $file->create('root', 'root', '0644');
-
+                $this->set_local_registration_status(TRUE);
                 $this->delete_cache();
             }
             return $result;
@@ -223,6 +222,14 @@ class Registration extends Rest
                 return $this->cache;
     
             $result = $this->request('registration', 'get_system_info');
+
+            $response = json_decode($result);
+
+            // Only set local registration flag if code is specific
+            if ($response->code == self::CODE_SYSTEM_NOT_REGISTERED)
+                $this->set_local_registration_status(FALSE);
+            elseif ($response->code == self::CODE_SYSTEM_REGISTERED)
+                $this->set_local_registration_status(TRUE);
 
             $this->_save_to_cache($cachekey, $result);
 
@@ -356,10 +363,7 @@ class Registration extends Rest
         $suva->reset_hostkey();
         $this->delete_cache();
 
-        $file = new File(self::FILE_REGISTERED_FLAG);
-
-        if ($file->exists())
-            $file->delete();
+        $this->set_local_registration_status(FALSE);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
