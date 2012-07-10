@@ -151,6 +151,32 @@ class Registration extends Rest
     }
 
     /**
+     * Updates local registration flag.
+     *
+     * @param boolean $status true if registered
+     *
+     * @return void
+     *
+     * @throws Webservice_Exception
+     */
+
+    public function set_local_registration_status($status)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        try {
+
+            $file = new File(self::FILE_REGISTERED_FLAG);
+            if (!$file->exists() && $status)
+                $file->create('root', 'root', '0644');
+            else if ($file->exists() && !$status)
+                $file->delete();
+        } catch (Exception $e) {
+            // Ignore?
+        }
+    }
+
+    /**
      * Get registration info related to an account on SDN.
      *
      * @param string  $username username
