@@ -223,10 +223,10 @@ function get_registration_info() {
     $('#subscription').hide();
     $('#loading-subscriptions').remove();
     $('#system').after(
-        '<div class=\'theme-loading-small\' id=\'loading-systems\' style=\'padding-top: 0;\'>" . lang('registration_get_system_list') . "</div>'
+        '<div class=\'theme-loading-small\' id=\'loading-systems\' style=\'margin: 5px 0px 4px 0px; padding-top: 0px;\'>" . lang('registration_get_system_list') . "</div>'
     );
     $('#subscription').after(
-        '<div class=\'theme-loading-small\' id=\'loading-subscriptions\' style=\'padding-top: 0;\'>" . lang('registration_get_subscription_list') . "</div>'
+        '<div class=\'theme-loading-small\' id=\'loading-subscriptions\' style=\'margin: 5px 0px 4px 0px; padding-top: 0px;\'>" . lang('registration_get_subscription_list') . "</div>'
     );
     $.ajax({
         type: 'POST',
