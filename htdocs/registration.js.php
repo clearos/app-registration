@@ -455,7 +455,7 @@ function check_system_info() {
         // See if we can save a step by preventing duplicate names which must be unique
         for (id in my_systems) {
             if ($('#system_name').val() == my_systems[id].name)
-                $('#system_name').val(my_systems[id].name + ' (' + Math.floor(Math.random() * 100) + ')');
+                $('#system_name').val(my_systems[id].name + '-' + Math.floor(Math.random() * 100));
         }
     }
     display_subscription_info();
