@@ -270,20 +270,23 @@ function get_registration_info() {
                     url: data.subscriptions[index].url,
                     evaluation: data.subscriptions[index].evaluation
                 };
-                //$('#subscription').append( new Option(data.subscriptions[index].description, data.subscriptions[index].id));
             }
             $('#system')
                 .find('option')
                 .remove()
                 .end()
             ;
-            $('#system').append( new Option('" . lang('base_select') . "', 0));
+            // TODO - IE8 workaround
+            //$('#system').append( new Option('" . lang('base_select') . "', 0));
+            $('#system').append($('<option value=\"0\">" . lang('base_select') . "</option>'));
             for (index = 0; index < data.systems.length; index++) {
                 my_systems[data.systems[index].id] = {
                     subscription_id: data.systems[index].subscription_id,
                     name: data.systems[index].name, supported: data.systems[index].supported
                 };
-                $('#system').append( new Option(data.systems[index].name, data.systems[index].id));
+                // TODO - IE8 workaround
+                //$('#system').append( new Option(data.systems[index].name, data.systems[index].id));
+                $('<option value=\"' + data.systems[index].id + '\">' + data.systems[index].name + '</option>').appendTo($('#system'));
             }
             reg_info_ok = true;
             check_system_info();
@@ -325,7 +328,7 @@ function get_system_info() {
             } else if (data.code < 0) {
                 $('#registration_loading_box').hide();
                 $('#registration_warning_box').show();
-                $('#registration_warning').html(xhr.responseText.toString());
+                $('#registration_warning').html(data.errmsg);
                 return;
             }
             $('#system_name_text').html(data.system_name);
@@ -400,9 +403,12 @@ function check_system_info() {
                 // Subscription is inherted from upgrade/reinstall
 
                 // Add inherited
+                // TODO - IE8 workaround
+                //new Option(my_subscriptions[my_systems[$('#system').val()].subscription_id].description,
+                //my_systems[$('#system').val()].subscription_id)
                 $('#subscription').append(
-                    new Option(my_subscriptions[my_systems[$('#system').val()].subscription_id].description,
-                    my_systems[$('#system').val()].subscription_id)
+                    $('<option value=\"' + my_systems[$('#system').val()].subscription_id  + '\">' +
+                    my_subscriptions[my_systems[$('#system').val()].subscription_id].description  + '</option>')
                 );
 
                 // Update display
@@ -412,13 +418,17 @@ function check_system_info() {
             }
             // Add back 'Select' default
             $('#subscription option[value=\'0\']').remove();
-            $('#subscription').append( new Option('" . lang('base_select') . "', 0));
+            // TODO - IE8 workaround
+            //$('#subscription').append( new Option('" . lang('base_select') . "', 0));
+            $('#subscription').append($('<option value=\"0\">" . lang('base_select') . "</option>'));
             for (id in my_subscriptions) {
                 // If no system has been selected, don't list any
                 if ($('#system').val() == 0)
                     continue;
                 if (!my_subscriptions[id].assigned) {
-                    $('#subscription').append( new Option(my_subscriptions[id].description, id));
+                    // TODO - IE8 workaround
+                    //$('#subscription').append( new Option(my_subscriptions[id].description, id));
+                    $('#subscription').append($('<option value=\"' + id + '\">' + my_subscriptions[id].description + '</option>'));
                 }
             }
             $('#subscription').attr('disabled', false);
@@ -435,15 +445,19 @@ function check_system_info() {
                 .end()
             ;
             // Add back 'Select' default
-            $('#subscription option[value=\'0\']').remove();//attr('disabled', true);
-            $('#subscription').append( new Option('" . lang('base_select') . "', 0));
+            $('#subscription option[value=\'0\']').remove();
+            //$('#subscription').append( new Option('" . lang('base_select') . "', 0));
+            $('#subscription').append($('<option value=\"0\">" . lang('base_select') . "</option>'));
             for (id in my_subscriptions) {
                 if (!my_subscriptions[id].assigned) {
                     // Only tack on serial number identifier if subscription
+                    // IE8 Workaround
+                    //$('#subscription').append( new Option(my_subscriptions[id].description + ' (' + my_subscriptions[id].serial_number.substr(0, 4) + '...)', id));
                     if (id > 0)
-                        $('#subscription').append( new Option(my_subscriptions[id].description + ' (' + my_subscriptions[id].serial_number.substr(0, 4) + '...)', id));
+                        $('#subscription').append($('<option value=\"' + id + '\">' + my_subscriptions[id].description +
+                            ' (' + my_subscriptions[id].serial_number.substr(0, 4) + '...)</option>'));
                     else
-                        $('#subscription').append( new Option(my_subscriptions[id].description, id));
+                        $('#subscription').append($('<option value=\"' + id + '\">' + my_subscriptions[id].description + '</option>'));
                 }
             }
         } else {
