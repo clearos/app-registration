@@ -1,0 +1,1 @@
+0 0 * * * root /usr/sbin/clearcenter-checkin >/dev/null 2>&1

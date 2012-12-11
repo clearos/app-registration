@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'registration';
-$app['version'] = '1.2.6';
+$app['version'] = '1.4.0';
 $app['release'] = '1';
 $app['vendor'] = 'ClearCenter';
 $app['packager'] = 'ClearCenter';
@@ -35,7 +35,7 @@ $app['controllers']['registration']['inline_help'] = array(
 /////////////////////////////////////////////////////////////////////////////
 
 $app['core_requires'] = array(
-    'app-clearcenter',
+    'app-clearcenter-core => 1:1.4.8'
 );
 
 $app['core_file_manifest'] = array(
@@ -46,6 +46,18 @@ $app['core_file_manifest'] = array(
         'group' => 'root',
         'config' => TRUE,
         'config_params' => 'noreplace',
+    ),
+    'app-registration.cron' => array(
+        'target' => '/etc/cron.d/app-registration',
+        'mode' => '0644',
+        'owner' => 'root',
+        'group' => 'root',
+   ),
+   'clearcenter-checkin' => array(
+        'target' => '/usr/sbin/clearcenter-checkin',
+        'mode' => '0755',
+        'owner' => 'root',
+        'group' => 'root',
     )
 );
 $app['core_directory_manifest'] = array(

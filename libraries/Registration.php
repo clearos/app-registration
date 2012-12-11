@@ -41,16 +41,24 @@ clearos_load_language('registration');
 use \clearos\apps\base\Configuration_File as Configuration_File;
 use \clearos\apps\base\File as File;
 use \clearos\apps\base\Folder as Folder;
-use \clearos\apps\clearcenter\Rest as Rest;
 use \clearos\apps\suva\Suva as Suva;
 use \clearos\apps\base\Country as Country;
+use \clearos\apps\tasks\Cron as Cron;
+use \clearos\apps\base\Shell as Shell;
+use \clearos\apps\clearcenter\Rest as Rest;
+use \clearos\apps\mode\Mode_Engine as Mode_Engine;
+use \clearos\apps\mode\Mode_Factory as Mode_Factory;
 
 clearos_load_library('base/Configuration_File');
 clearos_load_library('base/File');
 clearos_load_library('base/Folder');
-clearos_load_library('clearcenter/Rest');
 clearos_load_library('suva/Suva');
 clearos_load_library('base/Country');
+clearos_load_library('tasks/Cron');
+clearos_load_library('base/Shell');
+clearos_load_library('clearcenter/Rest');
+clearos_load_library('mode/Mode_Engine');
+clearos_load_library('mode/Mode_Factory');
 
 // Exceptions
 //-----------
@@ -85,7 +93,9 @@ class Registration extends Rest
 
     const FILE_CONFIG = '/etc/clearos/registration.conf';
     const FILE_REGISTERED_FLAG = '/var/clearos/registration/registered';
+    const FILE_AUDIT = 'audit.json';
     const FOLDER_REGISTRATION = '/var/clearos/registration';
+    const COMMAND_CAT = '/bin/cat';
     const REGISTER_NEW = 0;
     const REGISTER_EXISTING = 1;
     const CODE_SYSTEM_REGISTERED = 0;
@@ -364,6 +374,107 @@ class Registration extends Rest
         $this->delete_cache();
 
         $this->set_local_registration_status(FALSE);
+    }
+
+    /**
+     * Registration check-in.
+     *
+     * @return void
+     * @throws Engine_Exception
+     */
+
+    function check_in()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+            
+        if (!$this->is_loaded)
+            $this->_load_config();
+
+        try {
+            $cron = new Cron();
+
+            $app = 'app-registration';
+
+            $schedule = NULL;
+            if ($cron->exists_configlet($app))
+                $schedule = $cron->get_configlet($app);
+            
+            while (TRUE) {
+                $dow = rand(0, 6);
+                if ($dow != date('w'))
+                    break;
+            }
+            if ($schedule == NULL || preg_match('/0 0 \* \* \*.*/', $schedule)) {
+                // Randomize future check-ins
+                $cron_entry = rand(0,59) . ' ' . rand(0,23) . ' * * ' . $dow . 
+                    " root /usr/sbin/clearcenter-checkin >/dev/null 2>&1";
+                $cron->delete_configlet($app);
+                $cron->add_configlet($app, $cron_entry);
+            }
+        } catch (Exception $e) {
+            // Don't really care
+        }
+
+        try {
+
+            // Device ID
+            //----------
+            $suva = new Suva();
+            $extras['device_id'] = $suva->get_device_name();
+
+            // Mode
+            //-----
+            if (clearos_library_installed('mode/Mode_Engine')) {
+                try {
+                    $mode_object = Mode_Factory::create();
+                    $extras['mode'] = $mode_object->get_mode();
+                } catch (\Exception $e) {
+                    // Not really worried about
+                }
+            }
+
+            // Uptime
+            //-------
+            $shell = new Shell();
+            $options = array('validate_exit_code', FALSE);
+            $exitcode = $shell->execute(self::COMMAND_CAT, '/proc/uptime', FALSE, $options);
+            if ($exitcode != 0)
+                throw new Engine_Exception(lang('marketplace_unable_to_get_installed_app_list'), CLEAROS_WARNING);
+            $line = $shell->get_last_output_line();
+            if (preg_match('/([0-9.]+)\s+([0-9.])/', $line, $match))
+                $extras['uptime'] = $match[1];
+
+            // Locale and Version Info always get sent up in Rest calls
+
+            // Opt-Out data
+            //-------------
+            try {
+                $file = new File(CLEAROS_TEMP_DIR . '/' . self::FILE_AUDIT);
+                if ($file->exists()) {
+                    $audit = json_decode($file->get_contents());
+                    if ($audit != NULL) {
+                        // Users
+                        if (!isset($this->config['exclude_user']) || !$this->config['exclude_user'])
+                            $extras['user'] = $audit->user;
+                        // Unique IP
+                        if (!isset($this->config['exclude_ip']) || !$this->config['exclude_ip'])
+                            $extras['ip'] = $audit->ip;
+                        // Unique MAC
+                        if (!isset($this->config['exclude_mac']) || !$this->config['exclude_mac'])
+                            $extras['mac'] = $audit->mac;
+                    }
+                }
+            } catch (\Exception $e) {
+                // Not really worried about
+            }
+            
+            $result = $this->request('registration', 'check_in', $extras);
+            $response = json_decode($result);
+            if ($response->code != 0)
+                throw new Engine_Exception($response->errmsg, CLEAROS_ERROR);
+        } catch (\Exception $e) {
+            throw new Engine_Exception(clearos_exception_message($e), CLEAROS_ERROR);
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////

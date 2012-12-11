@@ -1,7 +1,7 @@
 
 Name: app-registration
 Epoch: 1
-Version: 1.2.6
+Version: 1.4.0
 Release: 1%{dist}
 Summary: System Registration
 License: Proprietary
@@ -19,7 +19,7 @@ Summary: System Registration - APIs and install
 License: LGPLv3
 Group: ClearOS/Libraries
 Requires: app-base-core
-Requires: app-clearcenter
+Requires: app-clearcenter-core => 1:1.4.8
 
 %description core
 System registration provides access to the Marketplace - a place where you will find the latest apps.  Creating an account and registering your system is quick and easy.
@@ -35,6 +35,8 @@ mkdir -p -m 755 %{buildroot}/usr/clearos/apps/registration
 cp -r * %{buildroot}/usr/clearos/apps/registration/
 
 install -d -m 755 %{buildroot}/var/clearos/registration
+install -D -m 0644 packaging/app-registration.cron %{buildroot}/etc/cron.d/app-registration
+install -D -m 0755 packaging/clearcenter-checkin %{buildroot}/usr/sbin/clearcenter-checkin
 install -D -m 0644 packaging/registration.conf %{buildroot}/etc/clearos/registration.conf
 
 %post
@@ -79,4 +81,6 @@ exit 0
 /usr/clearos/apps/registration/deploy
 /usr/clearos/apps/registration/language
 /usr/clearos/apps/registration/libraries
+/etc/cron.d/app-registration
+/usr/sbin/clearcenter-checkin
 %config(noreplace) /etc/clearos/registration.conf
