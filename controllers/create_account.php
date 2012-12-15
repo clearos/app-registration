@@ -73,13 +73,23 @@ class Create_Account extends ClearOS_Controller
 
         if (($this->input->post('create') && $form_ok)) {
             try {
+                $interests = 0;
+                if ((boolean)$this->input->post('interest_new_release'))
+                    $interests += 1;
+                if ((boolean)$this->input->post('interest_new_apps'))
+                    $interests += 2;
+                if ((boolean)$this->input->post('interest_betas'))
+                    $interests += 4;
+                if ((boolean)$this->input->post('interest_promotions'))
+                    $interests += 8;
                 $response = json_decode(
                     $this->registration->create_account(
                         $this->input->post('new_account_username'),
                         $this->input->post('new_account_password'),
                         $this->input->post('email'),
                         $this->input->post('country'),
-                        (boolean)$this->input->post('mailer')
+                        (boolean)$this->input->post('mailer'),
+                        $interests
                     )
                 );
                 if ($response->code == 0) {

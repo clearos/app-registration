@@ -128,13 +128,14 @@ class Registration extends Rest
      * @param String $system_name       system name
      * @param int    $system            system ID
      * @param int    $subscription      subscription ID
+     * @param String $environment       environment
      *
      * @return Object JSON-encoded response
      *
      * @throws Webservice_Exception
      */
 
-    public function register($username, $password, $registration_type, $system_name, $system, $subscription)
+    public function register($username, $password, $registration_type, $system_name, $system, $subscription, $environment)
     {
         clearos_profile(__METHOD__, __LINE__);
 
@@ -142,7 +143,7 @@ class Registration extends Rest
 
             $extras = array (
                 'username' => $username, 'password' => $password, 'registration_type' => $registration_type,
-                'system_name' => $system_name, 'system' => $system, 'subscription' => $subscription
+                'system_name' => $system_name, 'system' => $system, 'subscription' => $subscription, 'environment' => $environment
             );
 
             $result = $this->request('registration', 'register', $extras);
@@ -298,17 +299,18 @@ class Registration extends Rest
     /**
      * Create an account on the SDN.
      *
-     * @param String $username account username
-     * @param String $password account password
-     * @param String $email    email
-     * @param String $country  country code
-     * @param int    $mailer   subscribe to mailing list
+     * @param String  $username  account username
+     * @param String  $password  account password
+     * @param String  $email     email
+     * @param String  $country   country code
+     * @param boolean $mailer    subscribe to mailing list
+     * @param int     $interests interest groups
      *
      * @return Object JSON-encoded response
      * @throws Webservice_Exception
      */
 
-    public function create_account($username, $password, $email, $country, $mailer)
+    public function create_account($username, $password, $email, $country, $mailer, $interests)
     {
         clearos_profile(__METHOD__, __LINE__);
 
@@ -316,7 +318,7 @@ class Registration extends Rest
     
             $extras = array(
                 'username' => $username, 'password' => $password,
-                'email' => $email, 'country' => $country, 'mailer' => $mailer
+                'email' => $email, 'country' => $country, 'mailer' => $mailer, 'interests' => $interests
             );
 
             $result = $this->request('registration', 'create_account', $extras);
@@ -671,5 +673,21 @@ class Registration extends Rest
 
         if (($country != '__') && (! array_key_exists($country, $country_list)))
             return lang('registration_country_invalid');
+    }
+
+    /**
+     * Validation routine for environment.
+     *
+     * @param string $environment environment
+     *
+     * @return string error message if environment is invalid
+     */
+
+    public function validate_environment($environment)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        if ($environment == '0' || !preg_match('/\w+/', $environment))
+            return lang('registration_environment_invalid');
     }
 }
