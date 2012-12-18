@@ -412,6 +412,9 @@ class Registration extends Rest
                     " root /usr/sbin/clearcenter-checkin >/dev/null 2>&1";
                 $cron->delete_configlet($app);
                 $cron->add_configlet($app, $cron_entry);
+                // Let's send the webservice call at a randomized time in the future
+                // to prevent bottlenecks
+                return;
             }
         } catch (Exception $e) {
             // Don't really care
