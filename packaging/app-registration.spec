@@ -1,7 +1,7 @@
 
 Name: app-registration
 Epoch: 1
-Version: 1.2.8
+Version: 1.2.9
 Release: 1%{dist}
 Summary: System Registration
 License: Proprietary

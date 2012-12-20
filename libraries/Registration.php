@@ -461,7 +461,7 @@ class Registration extends Rest
                     if ($audit != NULL) {
                         // Users
                         if (!isset($this->config['exclude_user']) || !$this->config['exclude_user'])
-                            $extras['user'] = $audit->users;
+                            $extras['user'] = $audit->users->weekly;
                         // Unique IP
                         if (!isset($this->config['exclude_ip']) || !$this->config['exclude_ip'])
                             $extras['ip4'] = $audit->ip4->weekly;
