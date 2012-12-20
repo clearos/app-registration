@@ -373,6 +373,7 @@ class Registration extends Rest
             
         $suva = new Suva();
         $suva->reset_hostkey();
+        $suva->set_device_name(0);
         $this->delete_cache();
 
         $this->set_local_registration_status(FALSE);
@@ -460,13 +461,13 @@ class Registration extends Rest
                     if ($audit != NULL) {
                         // Users
                         if (!isset($this->config['exclude_user']) || !$this->config['exclude_user'])
-                            $extras['user'] = $audit->user;
+                            $extras['user'] = $audit->users;
                         // Unique IP
                         if (!isset($this->config['exclude_ip']) || !$this->config['exclude_ip'])
-                            $extras['ip'] = $audit->ip;
+                            $extras['ip4'] = $audit->ip4->weekly;
                         // Unique MAC
                         if (!isset($this->config['exclude_mac']) || !$this->config['exclude_mac'])
-                            $extras['mac'] = $audit->mac;
+                            $extras['mac'] = $audit->mac->weekly;
                     }
                 }
             } catch (\Exception $e) {
