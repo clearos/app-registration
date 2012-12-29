@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'registration';
-$app['version'] = '1.2.10';
+$app['version'] = '1.2.11';
 $app['release'] = '1';
 $app['vendor'] = 'ClearCenter';
 $app['packager'] = 'ClearCenter';
@@ -34,9 +34,10 @@ $app['controllers']['registration']['inline_help'] = array(
 // Packaging
 /////////////////////////////////////////////////////////////////////////////
 
+# TODO - Add dependency back in when ready
+#    'csplugin-audit'
 $app['core_requires'] = array(
-    'app-clearcenter-core => 1:1.4.8',
-    'csplugin-audit'
+    'app-clearcenter-core => 1:1.4.8'
 );
 
 $app['core_file_manifest'] = array(
