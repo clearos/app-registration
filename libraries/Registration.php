@@ -694,4 +694,69 @@ class Registration extends Rest
         if ($environment == '0' || !preg_match('/\w+/', $environment))
             return lang('registration_environment_invalid');
     }
+
+    /**
+     * Validation routine for mailer.
+     *
+     * @param string $mailer mailer
+     *
+     * @return string error message if mailer is invalid
+     */
+
+    public function validate_mailer($mailer)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+    }
+
+    /**
+     * Validation routine for interest group.
+     *
+     * @param string $interest interest
+     *
+     * @return string error message if interest group is invalid
+     */
+
+    public function validate_interest_new_release($interest)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+    }
+
+    /**
+     * Validation routine for interest group.
+     *
+     * @param string $interest interest
+     *
+     * @return string error message if interest group is invalid
+     */
+
+    public function validate_interest_new_apps($interest)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+    }
+
+    /**
+     * Validation routine for interest group.
+     *
+     * @param string $interest interest
+     *
+     * @return string error message if interest group is invalid
+     */
+
+    public function validate_interest_betas($interest)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+    }
+
+    /**
+     * Validation routine for interest group.
+     *
+     * @param string $interest interest
+     *
+     * @return string error message if interest group is invalid
+     */
+
+    public function validate_interest_promotions($interest)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+    }
 }

@@ -82,6 +82,14 @@ $(document).ready(function() {
         check_system_info();
     });
 
+    $('#email').css('width', 250);
+
+    toggle_mailer();
+
+    $('#mailer').change(function(event) {
+        toggle_mailer();
+    });
+
     $('#subscription').change(function(event) {
         if ($('#subscription').val() == 0) {
             $('#subscription_details').remove();
@@ -126,6 +134,26 @@ $(document).ready(function() {
         get_registration_info();
     });
 });
+
+/**
+ * Sets up mailer dropdown and interest group display.
+ *
+ * @return NULL
+ */
+
+function toggle_mailer() {
+        if ($('#mailer').val() == 0) {
+            $('#interest_new_release_field').hide();
+            $('#interest_new_apps_field').hide();
+            $('#interest_betas_field').hide();
+            $('#interest_promotions_field').hide();
+	} else {
+            $('#interest_new_release_field').show();
+            $('#interest_new_apps_field').show();
+            $('#interest_betas_field').show();
+            $('#interest_promotions_field').show();
+	}
+}
 
 /**
  * Displays subcription info.
