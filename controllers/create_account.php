@@ -115,18 +115,18 @@ class Create_Account extends ClearOS_Controller
 
         $data['mailer'] = TRUE;
         $data['country'] = 'US';
-	if ($this->input->post('create')) {
-		$data['interest_new_release'] = (boolean)$this->input->post('interest_new_release');
-		$data['interest_new_apps'] = (boolean)$this->input->post('interest_new_apps');
-		$data['interest_betas'] = (boolean)$this->input->post('interest_betas');
-		$data['interest_promotions'] = (boolean)$this->input->post('interest_promotions');
-	} else {
-		$data['interest_new_release'] = TRUE;
-		$data['interest_new_apps'] = TRUE;
-		$data['interest_betas'] = TRUE;
-		$data['interest_promotions'] = TRUE;
-	}
-	$data['country_options'] = $this->registration->get_country_options();
+    if ($this->input->post('create')) {
+        $data['interest_new_release'] = (boolean)$this->input->post('interest_new_release');
+        $data['interest_new_apps'] = (boolean)$this->input->post('interest_new_apps');
+        $data['interest_betas'] = (boolean)$this->input->post('interest_betas');
+        $data['interest_promotions'] = (boolean)$this->input->post('interest_promotions');
+    } else {
+        $data['interest_new_release'] = TRUE;
+        $data['interest_new_apps'] = TRUE;
+        $data['interest_betas'] = TRUE;
+        $data['interest_promotions'] = TRUE;
+    }
+    $data['country_options'] = $this->registration->get_country_options();
 
         $this->page->view_form('registration/create_account', $data, lang('registration_registration'));
     }

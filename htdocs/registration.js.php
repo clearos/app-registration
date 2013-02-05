@@ -147,12 +147,12 @@ function toggle_mailer() {
             $('#interest_new_apps_field').hide();
             $('#interest_betas_field').hide();
             $('#interest_promotions_field').hide();
-	} else {
+    } else {
             $('#interest_new_release_field').show();
             $('#interest_new_apps_field').show();
             $('#interest_betas_field').show();
             $('#interest_promotions_field').show();
-	}
+    }
 }
 
 /**
