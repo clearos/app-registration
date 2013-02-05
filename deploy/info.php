@@ -41,7 +41,7 @@ $app['core_requires'] = array(
 );
 
 $app['core_file_manifest'] = array(
-   'registration.conf' => array(
+    'registration.conf' => array(
         'target' => '/etc/clearos/registration.conf',
         'mode' => '0644',
         'owner' => 'root',
@@ -54,8 +54,10 @@ $app['core_file_manifest'] = array(
         'mode' => '0644',
         'owner' => 'root',
         'group' => 'root',
-   ),
-   'clearcenter-checkin' => array(
+        'config' => TRUE,
+        'config_params' => 'noreplace',
+    ),
+    'clearcenter-checkin' => array(
         'target' => '/usr/sbin/clearcenter-checkin',
         'mode' => '0755',
         'owner' => 'root',
@@ -63,5 +65,5 @@ $app['core_file_manifest'] = array(
     )
 );
 $app['core_directory_manifest'] = array(
-   '/var/clearos/registration' => array('mode' => '755', 'owner' => 'root', 'group' => 'root')
+    '/var/clearos/registration' => array('mode' => '755', 'owner' => 'root', 'group' => 'root')
 );
