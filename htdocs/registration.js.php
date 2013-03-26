@@ -56,7 +56,7 @@ $(document).ready(function() {
 
     $('#theme_wizard_nav_next').hide();
     $('#wizard_nav_next').click(function(){
-        window.location = '/app/registration/wizard_redirect';
+        window.location = '/app/base/wizard/next_step';
     });
 
     // Get SDN and Registration info
@@ -142,16 +142,16 @@ $(document).ready(function() {
  */
 
 function toggle_mailer() {
-        if ($('#mailer').val() == 0) {
-            $('#interest_new_release_field').hide();
-            $('#interest_new_apps_field').hide();
-            $('#interest_betas_field').hide();
-            $('#interest_promotions_field').hide();
+    if ($('#mailer').val() == 0) {
+        $('#interest_new_release_field').hide();
+        $('#interest_new_apps_field').hide();
+        $('#interest_betas_field').hide();
+        $('#interest_promotions_field').hide();
     } else {
-            $('#interest_new_release_field').show();
-            $('#interest_new_apps_field').show();
-            $('#interest_betas_field').show();
-            $('#interest_promotions_field').show();
+        $('#interest_new_release_field').show();
+        $('#interest_new_apps_field').show();
+        $('#interest_betas_field').show();
+        $('#interest_promotions_field').show();
     }
 }
 

@@ -162,18 +162,4 @@ class Registration extends ClearOS_Controller
         $this->page->set_message(lang('registration_reset') . '<span style=\'padding: 5px 0px 5px 10px;\'>' . anchor_ok('/app/registration') . '</span>', 'info');
         $this->index(TRUE);
     }
-
-    /**
-     * Redirects for wizard navigation.
-     *
-     * A helper for javascript for sending the "next" button to the 
-     * next page in the wizard.
-     *
-     * @return redirect
-     */
-
-    function wizard_redirect()
-    {
-        redirect($this->session->userdata('wizard_redirect'));
-    }
 }
