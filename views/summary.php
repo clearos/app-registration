@@ -69,3 +69,18 @@ echo form_footer();
 echo form_close();
 
 echo "</div>";
+
+///////////////////////////////////////////////////////////////////////////////
+// Extras box
+///////////////////////////////////////////////////////////////////////////////
+
+echo "<div id='registration_extras' style='display: none'>";
+
+// FIXME: translate
+echo infobox_highlight(
+    'Updating Professional',
+    'Thank you!  Your system is now registered and included apps are installing:<br><br>' .
+    "<span id='registration_extras_details'><span class='theme-loading-small'>" . 'This may take a minute or so...' . "</span></span>"
+);
+
+echo "</div>";

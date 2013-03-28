@@ -384,8 +384,9 @@ function get_system_info() {
 
             $('#registration_loading_box').hide();
             $('#registration_summary').show();
-            // Wizard: enable next button 
-            $('#theme_wizard_nav_next').show();
+
+            // Check to see if Professional extras have been installed
+            get_extras_state();
         },
         error: function(xhr, text, err) {
             // Don't display any errors if ajax request was aborted due to page redirect/reload
@@ -585,6 +586,35 @@ function sdn_terms_of_service() {
         }
     });
 }
+
+function show_extras(payload) {
+    // Wizard: enable next button 
+    if (payload.complete) {
+        $('#theme_wizard_nav_next').show();
+        $('#registration_extras_details').html('Installation complete'); // FIXME translate
+    } else {
+        $('#registration_extras_details').html('<span class=\'theme-loading-small\'>' + payload.details + '</span>');
+        $('#theme_wizard_nav_next').hide();
+        $('#registration_extras').show();
+    }
+}
+
+function get_extras_state() {
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        url: '/app/registration/extras/handle_install',
+        data: '',
+        success: function(json) {
+            show_extras(json);
+            window.setTimeout(get_extras_state, 3000);
+        },
+        error: function(xhr, text, err) {
+            window.setTimeout(get_extras_state, 3000);
+        }
+    });
+}
+
 ";
 
 // vim: syntax=javascript ts=4

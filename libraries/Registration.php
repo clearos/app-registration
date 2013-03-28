@@ -96,6 +96,7 @@ class Registration extends Rest
     const FILE_AUDIT = 'audit.json';
     const FOLDER_REGISTRATION = '/var/clearos/registration';
     const COMMAND_CAT = '/bin/cat';
+    const COMMAND_INSTALL_EXTRAS = '/usr/clearos/apps/registration/deploy/install-extras';
     const REGISTER_NEW = 0;
     const REGISTER_EXISTING = 1;
     const CODE_SYSTEM_REGISTERED = 0;
@@ -152,6 +153,7 @@ class Registration extends Rest
                 $suva = new Suva();
                 $suva->set_device_name($response->device_id);
                 $this->set_local_registration_status(TRUE);
+                $this->_install_extras();
                 $this->delete_cache();
             }
             return $result;
@@ -486,6 +488,25 @@ class Registration extends Rest
     ///////////////////////////////////////////////////////////////////////////////
     // P R I V A T E   M E T H O D S
     ///////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Intall extra packages.
+     *
+     * After a system is registered, new repos for paid apps are available.
+     * This makes it possible to install additional features.
+     *
+     * @return void
+     */
+
+    protected function _install_extras()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        $options['background'] = TRUE;
+
+        $shell = new Shell();
+        $shell->execute(self::COMMAND_INSTALL_EXTRAS, '', TRUE, $options);
+    }
 
     /**
      * Loads configuration files.
