@@ -3,9 +3,9 @@
 /**
  * Javascript helper for Registration.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Javascript
+ * @category   apps
+ * @package    registration
+ * @subpackage javascript
  * @author     ClearCenter <developer@clearcenter.com>
  * @copyright  2011 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license

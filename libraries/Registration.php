@@ -3,9 +3,9 @@
 /**
  * Registration class.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Libraries
+ * @category   apps
+ * @package    registration
+ * @subpackage libraries
  * @author     ClearCenter <developer@clearcenter.com>
  * @copyright  2011 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
@@ -76,9 +76,9 @@ clearos_load_library('base/Validation_Exception');
 /**
  * Registration for ClearCenter class.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Libraries
+ * @category   apps
+ * @package    registration
+ * @subpackage libraries
  * @author     ClearCenter <developer@clearcenter.com>
  * @copyright  2011 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license

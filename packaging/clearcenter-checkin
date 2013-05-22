@@ -4,9 +4,9 @@
 /**
  * Registration check-in.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Scripts
+ * @category   apps
+ * @package    registration
+ * @subpackage scripts
  * @author     ClearCenter <developer@clearcenter.com>
  * @copyright  2011-2012 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license

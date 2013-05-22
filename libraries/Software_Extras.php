@@ -3,9 +3,9 @@
 /**
  * Software extras class.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Libraries
+ * @category   apps
+ * @package    registration
+ * @subpackage libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
  * @copyright  2013 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
@@ -77,9 +77,9 @@ use \Exception as Exception;
 /**
  * Software extras class.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Libraries
+ * @category   apps
+ * @package    registration
+ * @subpackage libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
  * @copyright  2013 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later

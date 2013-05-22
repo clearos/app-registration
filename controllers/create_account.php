@@ -3,9 +3,9 @@
 /**
  * Create account controller.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Controllers
+ * @category   apps
+ * @package    registration
+ * @subpackage controllers
  * @author     ClearCenter <developer@clearcenter.com>
  * @copyright  2011 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
@@ -23,9 +23,9 @@
 /**
  * Registration controller.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Controllers
+ * @category   apps
+ * @package    registration
+ * @subpackage controllers
  * @author     ClearCenter <developer@clearcenter.com>
  * @copyright  2011 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license

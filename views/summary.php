@@ -3,9 +3,9 @@
 /**
  * Registration summary view.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Views
+ * @category   apps
+ * @package    registration
+ * @subpackage views
  * @author     ClearCenter <developer@clearcenter.com>
  * @copyright  2011 ClearCenter
  * @license    http://www.clearcenter.com/Company/terms.html ClearSDN license

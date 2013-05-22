@@ -3,9 +3,9 @@
 /**
  * AJAX controller for Registration.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Controllers
+ * @category   apps
+ * @package    registration
+ * @subpackage controllers
  * @author     ClearCenter <developer@clearcenter.com>
  * @copyright  2011 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
@@ -26,9 +26,9 @@ use \clearos\apps\base\Engine_Exception as Engine_Exception;
 /**
  * JSON controller.
  *
- * @category   Apps
- * @package    Registration
- * @subpackage Controllers
+ * @category   apps
+ * @package    registration
+ * @subpackage controllers
  * @author     ClearCenter <developer@clearcenter.com>
  * @copyright  2011 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
