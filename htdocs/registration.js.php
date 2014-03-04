@@ -47,7 +47,6 @@ $(document).ready(function() {
     $('#subscription_field').hide();
 
     $('#registration_loading_box').show();
-    $('#registration_warning_box').hide();
     $('#registration_summary').hide();
 
     reg_default_name = $('#system_name').val();
@@ -131,6 +130,9 @@ $(document).ready(function() {
     $('#refresh').click(function (e) {
         e.preventDefault();
         $('#registration_warning_box').hide();
+        $('.theme-validation-error').hide();
+        if ($('.theme-validation-error').prev()[0].localName.toLowerCase() == 'br' ) 
+            $('.theme-validation-error').prev().remove();
         get_registration_info();
     });
 });
@@ -267,6 +269,11 @@ function get_registration_info() {
                 $('#loading-systems').removeClass('theme-loading-small');
                 $('#loading-subscriptions').html(data.errmsg);
                 $('#loading-subscriptions').removeClass('theme-loading-small');
+                // Code 4 is auth error...display some additional help RE: ClearCenter vs. ClearFoundation
+                if (data.code == 4 && data.help != undefined) {
+                    $('#registration_warning_box').show();
+                    $('#registration_warning').html(data.help);
+                }
                 reg_info_ok = false;
                 return;
             } else if (data.code < 0) {

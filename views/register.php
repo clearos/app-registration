@@ -23,11 +23,11 @@ $this->lang->load('registration');
 // Warning box
 ///////////////////////////////////////////////////////////////////////////////
 
-echo "<div id='registration_warning_box' style='display: none'>";
+echo "<div id='registration_warning_box'" . (isset($errmsg) ? "" : " style='display: none'") . ">";
 
 echo infobox_warning(
     lang('base_warning'),
-    "<div id='registration_warning'></div>"
+    "<div id='registration_warning'>" . (isset($errmsg) ? $errmsg : "") . "</div>"
 );
 
 echo "</div>";

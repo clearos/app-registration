@@ -25,11 +25,10 @@ $this->lang->load('registration');
 
 echo "<div id='registration_loading_box' style='display: none'>";
 
-if (!$reset)
-    echo infobox_highlight(
-        lang('base_status'),
-        "<div class='theme-loading-normal'>" . lang('registration_loading_registration_information') ."</div>"
-    );
+echo infobox_highlight(
+    lang('base_status'),
+    "<div class='theme-loading-normal'>" . lang('registration_loading_registration_information') ."</div>"
+);
 
 echo "</div>";
 

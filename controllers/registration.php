@@ -40,21 +40,19 @@ class Registration extends ClearOS_Controller
      * @return view
      */
 
-    function index($reset = NULL)
+    function index()
     {
         clearos_profile(__METHOD__, __LINE__);
 
         $this->load->library('registration/Registration');
         $this->lang->load('registration');
         $data = array();
-        if ($reset != null)
-            $data['reset'] = TRUE;
 
         $this->page->view_form('registration/summary', $data, lang('registration_registration'));
     }
 
     /**
-     * Register recontroller
+     * Register controller
      *
      * @param String $username username
      *
@@ -110,7 +108,7 @@ class Registration extends ClearOS_Controller
                 if ($response->code == 0) {
                     redirect('/registration');
                 } else {
-                    $this->page->set_message($response->errmsg);
+                    $data['errmsg'] = $response->errmsg;
                 }
             } catch (Exception $e) {
                 $this->page->view_exception($e);
@@ -159,7 +157,7 @@ class Registration extends ClearOS_Controller
         clearos_load_language('registration');
 
         $this->registration->reset();
-        $this->page->set_message(lang('registration_reset') . '<span style=\'padding: 5px 0px 5px 10px;\'>' . anchor_ok('/app/registration') . '</span>', 'info');
-        $this->index(TRUE);
+        $this->page->set_message(lang('registration_reset'), 'info');
+        redirect('/registration/register');
     }
 }
