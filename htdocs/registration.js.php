@@ -54,8 +54,9 @@ $(document).ready(function() {
         $('#system_field').hide();
 
     $('#theme_wizard_nav_next').hide();
-    $('#wizard_nav_next').click(function(){
+    $('#wizard_nav_next').click(function() {
         window.location = '/app/base/wizard/next_step';
+        return;
     });
 
     // Get SDN and Registration info
@@ -345,10 +346,9 @@ function get_system_info() {
     }
 
     $.ajax({
-        type: 'POST',
+        type: 'GET',
         dataType: 'json',
         url: '/app/registration/ajax/get_system_info',
-        data: 'ci_csrf_token=' + $.cookie('ci_csrf_token'),
         success: function(data) {
             if (data.code > 0) {
                 // Code 3 == not registered

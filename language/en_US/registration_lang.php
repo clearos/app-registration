@@ -59,7 +59,7 @@ $lang['registration_serial_number'] = 'Serial No.';
 $lang['registration_expiry'] = 'Expiry';
 $lang['registration_type'] = 'Type';
 $lang['registration_evaluation'] = 'Evaluation';
-$lang['registration_offline'] = 'System registration/status is not available at this time.  It appears your system is not connected to the Internet - please check your network settings.';
+$lang['registration_offline'] = 'System registration/status is not available at this time.  It appears your system is not connected to the Internet - please check your <a href="/app/network/iface">network settings</a>, making sure you have at least one external interface/role configured.';
 $lang['registration_loading_registration_information'] = 'Loading registration information.';
 $lang['registration_new_release'] = 'New Version Releases';
 $lang['registration_new_apps'] = 'New Marketplace Apps';
