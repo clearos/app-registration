@@ -45,6 +45,7 @@ class Create_Account extends ClearOS_Controller
         clearos_profile(__METHOD__, __LINE__);
 
         $this->lang->load('registration');
+        $this->lang->load('base');
         $this->load->library('registration/Registration');
 
         $data['vendor'] = $this->session->userdata['sdn_org'];
@@ -70,9 +71,10 @@ class Create_Account extends ClearOS_Controller
         if ($form_ok) {
             if ($this->input->post('new_account_password') != $this->input->post('new_account_password_confirm')) {
                 $form_ok = FALSE;
-                $this->page->set_message(lang('registration_password_mismatch'), 'warning');
+                $this->page->set_message(lang('base_password_and_verify_do_not_match'), 'warning');
             }
         }
+
         // Handle form submit
         //-------------------
 

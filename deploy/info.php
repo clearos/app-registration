@@ -36,7 +36,7 @@ $app['controllers']['registration']['inline_help'] = array(
 
 $app['core_requires'] = array(
     'app-clearcenter-core => 1:1.4.8',
-    'app-base-core => 1:1.4.31'
+    'app-base-core => 1:1.6.5'
 );
 
 $app['core_file_manifest'] = array(

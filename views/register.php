@@ -61,7 +61,12 @@ echo field_dropdown('system', $system_options, 0, lang('registration_system_list
 echo field_dropdown('subscription', $subscription_options, 0, lang('registration_subscription_list'), FALSE);
 echo field_input('system_name', $system_name, lang('registration_system_name'), FALSE);
 echo field_dropdown('environment', $environment_options, $environment, lang('registration_environment'), FALSE);
-echo field_info('terms_of_service', lang('registration_terms_of_service'), sprintf(lang('registration_terms_of_service_blurb'), '<b>' . lang('registration_register_system') . '</b>', '<a href=\'#\' class=\'view_tos highlight-link\'>' . lang('registration_terms_of_service') . '</a>'));
+echo field_info('terms_of_service', 
+    lang('registration_terms_of_service'), 
+    sprintf(lang('registration_terms_of_service_blurb'),
+    '<b>' . lang('registration_register_system') . '</b>', 
+    '<a href=\'#\' class=\'view_tos highlight-link\'>' . lang('registration_terms_of_service') . '</a>')
+);
 
 echo field_button_set($buttons);
 

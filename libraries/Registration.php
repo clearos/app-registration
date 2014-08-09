@@ -444,10 +444,7 @@ class Registration extends Rest
             // Uptime
             //-------
             $shell = new Shell();
-            $options = array('validate_exit_code', FALSE);
-            $exitcode = $shell->execute(self::COMMAND_CAT, '/proc/uptime', FALSE, $options);
-            if ($exitcode != 0)
-                throw new Engine_Exception(lang('marketplace_unable_to_get_installed_app_list'), CLEAROS_WARNING);
+            $shell->execute(self::COMMAND_CAT, '/proc/uptime', FALSE);
             $line = $shell->get_last_output_line();
             if (preg_match('/([0-9.]+)\s+([0-9.])/', $line, $match))
                 $extras['uptime'] = $match[1];
@@ -578,9 +575,10 @@ class Registration extends Rest
         clearos_profile(__METHOD__, __LINE__);
 
         if (! preg_match("/^[A-Za-z0-9]+$/", $sdn_username))
-            return lang('registration_sdn_username_is_invalid');
+            return lang('base_username_invalid');
+
         if (strlen($sdn_username) < 4)
-            return lang('registration_sdn_username_min_length') . ' (4).';
+            return lang('base_username_too_short') . ' (4).';
     }
 
     /**
@@ -596,9 +594,10 @@ class Registration extends Rest
         clearos_profile(__METHOD__, __LINE__);
 
         if (! preg_match("/^[A-Za-z0-9\\!\\@\\#\\$\\%\\^\\*\\(\\)\\-\\_\\&]+$/", $sdn_password))
-            return lang('registration_sdn_password_is_invalid');
+            return lang('base_password_is_invalid');
+
         if (strlen($sdn_password) < 4)
-            return lang('registration_sdn_password_min_length') . ' (4).';
+            return lang('base_password_too_short') . ' (4).';
     }
 
     /**
@@ -678,7 +677,7 @@ class Registration extends Rest
         clearos_profile(__METHOD__, __LINE__);
 
         if (!preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/", $email))
-            return lang('registration_email_invalid');
+            return lang('base_email_address_invalid');
     }
 
     /**
@@ -697,7 +696,7 @@ class Registration extends Rest
         $country_list = $country_object->get_list();
 
         if (($country != '__') && (! array_key_exists($country, $country_list)))
-            return lang('registration_country_invalid');
+            return lang('base_country_invalid');
     }
 
     /**

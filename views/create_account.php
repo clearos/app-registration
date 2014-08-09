@@ -42,9 +42,9 @@ echo form_header(lang('registration_create_account'));
 
 echo field_input('new_account_username', $new_account_username, lang('registration_account_username'), FALSE);
 echo field_password('new_account_password', $new_account_password, lang('base_password'), FALSE);
-echo field_password('new_account_password_confirm', $new_account_password_confirm, lang('registration_password_confirm'), FALSE);
-echo field_input('email', $email, lang('registration_email'), FALSE);
-echo field_dropdown('country', $country_options, $country, lang('registration_country'), FALSE);
+echo field_password('new_account_password_confirm', $new_account_password_confirm, lang('base_verify'), FALSE);
+echo field_input('email', $email, lang('base_email_address'), FALSE);
+echo field_dropdown('country', $country_options, $country, lang('base_country'), FALSE);
 echo field_toggle_enable_disable('mailer', $mailer, lang('registration_mailer'), FALSE);
 echo field_checkbox('interest_new_release', $interest_new_release, lang('registration_new_release'), FALSE);
 echo field_checkbox('interest_new_apps', $interest_new_apps, lang('registration_new_apps'), FALSE);
