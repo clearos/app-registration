@@ -61,5 +61,4 @@ $lang['registration_system_name'] = 'System Name';
 $lang['registration_terms_of_service_blurb'] = 'By clicking %s, you agree to the %s.';
 $lang['registration_terms_of_service'] = 'Terms of Service';
 $lang['registration_type_is_invalid'] = 'Invalid registration request.';
-$lang['registration_type'] = 'Registration Type';
 $lang['registration_type'] = 'Type';
