@@ -1,7 +1,7 @@
 
 Name: app-registration
 Epoch: 1
-Version: 1.6.0
+Version: 1.6.5
 Release: 1%{dist}
 Summary: System Registration
 License: Proprietary
@@ -20,7 +20,7 @@ License: LGPLv3
 Group: ClearOS/Libraries
 Requires: app-base-core
 Requires: app-clearcenter-core => 1:1.4.8
-Requires: app-base-core => 1:1.4.31
+Requires: app-base-core => 1:1.6.5
 
 %description core
 System registration provides access to the Marketplace - a place where you will find the latest apps.  Creating an account and registering your system is quick and easy.
