@@ -27,7 +27,7 @@ echo "<div id='registration_loading_box' style='display: none'>";
 
 echo infobox_highlight(
     lang('base_status'),
-    "<div class='theme-loading-normal'>" . lang('registration_loading_registration_information') ."</div>"
+    loading('normal', lang('registration_loading_registration_information'))
 );
 
 echo "</div>";
