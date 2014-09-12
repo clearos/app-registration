@@ -72,3 +72,4 @@ echo field_button_set($buttons);
 
 echo form_footer();
 echo form_close();
+echo modal_info("wizard_next_showstopper", lang('base_error'), lang('registration_required'), array('type' => 'warning'));

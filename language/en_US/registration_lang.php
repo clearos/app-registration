@@ -41,6 +41,7 @@ $lang['registration_registered'] = 'Registered';
 $lang['registration_registering'] = 'Registering';
 $lang['registration_registering_help'] = 'If you are upgrading or re-installing a system, please make sure you select this type of registration.  This option makes it easy to restore apps and services on your system.';
 $lang['registration_registration'] = 'System Registration';
+$lang['registration_required'] = 'Please register your system before continuing.';
 $lang['registration_request_evaluation'] = 'Request an evaluation';
 $lang['registration_request_purchase'] = 'Purchase a subscription';
 $lang['registration_reseller'] = 'Value Added Reseller';

@@ -53,10 +53,16 @@ $(document).ready(function() {
     if ($('#registration_type').val() == 0)
         $('#system_field').hide();
 
-    $('#theme_wizard_nav_next').hide();
-    $('#wizard_nav_next').click(function() {
-        window.location = '/app/base/wizard/next_step';
-        return;
+    // Wizard previous/next button handling
+    //-------------------------------------
+
+    $('#wizard_nav_next').on('click', function(e) {
+        if ($('#wizard_next_showstopper').length == 0) {
+            // Allow to go to next step
+        } else {
+            e.preventDefault();
+            $('#wizard_next_showstopper').modal({show: true, backdrop: 'static'});
+        }
     });
 
     // Get SDN and Registration info
@@ -515,7 +521,10 @@ function check_username_availability() {
     var username = $('#new_account_username').val();
     $('#new_account_username').hide();
     $('#checking_username').remove();
-    $('#new_account_username').after('<div class=\'theme-loading-small\' id=\'checking_username\' style=\'padding-top: 0;\'>" . lang('registration_checking_username_availability') . "</div>');
+    var options = new Object();
+    options.text = '" . lang('registration_checking_username_availability') . "';
+    options.id = 'checking_username';
+    $('#new_account_username').after(clearos_loading(options));
     $.ajax({
         type: 'POST',
         dataType: 'json',
