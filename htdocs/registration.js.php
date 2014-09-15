@@ -261,11 +261,13 @@ function get_registration_info() {
 
     var sys_options = new Object();
     sys_options.id = 'loading-systems';
+    sys_options.form_control = true;
     sys_options.text = '" . lang('registration_get_system_list') . "';
     $('#system').after(clearos_loading(sys_options));
 
     var sub_options = new Object();
     sub_options.id = 'loading-subscriptions';
+    sub_options.form_control = true;
     sub_options.text = '" . lang('registration_get_subscription_list') . "';
     $('#subscription').after(clearos_loading(sub_options));
     $.ajax({
