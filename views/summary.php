@@ -23,14 +23,11 @@ $this->lang->load('registration');
 // Infobox
 ///////////////////////////////////////////////////////////////////////////////
 
-echo "<div id='registration_loading_box' style='display: none'>";
-
-echo infobox_highlight(
+echo infobox_info(
     lang('base_status'),
-    loading('normal', lang('registration_loading_registration_information'))
+    loading('normal', lang('registration_loading_registration_information')),
+    array('id' => 'registration_loading_box', 'display' => FALSE)
 );
-
-echo "</div>";
 
 ///////////////////////////////////////////////////////////////////////////////
 // Warning box

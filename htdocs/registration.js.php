@@ -61,7 +61,7 @@ $(document).ready(function() {
             // Allow to go to next step
         } else {
             e.preventDefault();
-            $('#wizard_next_showstopper').modal({show: true, backdrop: 'static'});
+            clearos_modal_infobox_open('wizard_next_showstopper');
         }
     });
 
@@ -136,10 +136,7 @@ $(document).ready(function() {
 
     $('#refresh').click(function (e) {
         e.preventDefault();
-        $('#registration_warning_box').hide();
         $('.theme-validation-error').hide();
-        if ($('.theme-validation-error').prev()[0].localName.toLowerCase() == 'br' ) 
-            $('.theme-validation-error').prev().remove();
         get_registration_info();
     });
 });
@@ -174,31 +171,30 @@ function display_subscription_info() {
     $('#subscription_details').remove();
     if ($('#subscription').val() == 0)
         return;
-    // If sidebar_summary does not exist, use wizard container
-    if ($('#sidebar_summary_table').length == 0)
-       $('#theme-sidebar-container').append('<div id=\'subscription_details\'</div>');
-    else
-       $('#sidebar_summary_table').parent().append('<div id=\'subscription_details\'</div>');
 
-    $('#subscription_details').html('<h3>" . lang('registration_subscription_details') . "</h3>' +
-    '<table width=\'100%\'>' +
-    '<tr>' +
-    '<td width=\'65\' valign=\'top\'><b>" . lang('base_description') . "</b></td>' +
-    '<td>' + my_subscriptions[$('#subscription').val()].description + '</td>' +
-    '</tr>' +
-    '<tr>' +
-    '<td valign=\'top\'><b>" . lang('registration_serial_number') . "</b></td>' +
-    '<td>' + my_subscriptions[$('#subscription').val()].serial_number + '</td>' +
-    '</tr>' +
-    '<tr>' +
-    '<td valign=\'top\'><b>" . lang('registration_expiry') . "</b></td>' +
-    '<td>' + $.datepicker.formatDate('MM d, yy', new Date(my_subscriptions[$('#subscription').val()].expire)) + '</td>' +
-    '</tr>' + (my_subscriptions[$('#subscription').val()].evaluation == false ? '' : 
-    '<tr>' +
-    '<td valign=\'top\'><b>" . lang('registration_type') . "</b></td>' +
-    '<td>" . lang('registration_evaluation') . "</td>' +
-    '</tr>')
-    );
+    var info = '<div id=\'registration-subscription-details\'>' +
+        '<h3>" . lang('registration_subscription_details') . "</h3>' +
+        '<div class=\'row theme-registration-detail\'>' +
+        '    <div class=\'col-lg-4 theme-field\'>" . lang('base_description') . "</div>' +
+        '    <div class=\'col-lg-8\'>' + my_subscriptions[$('#subscription').val()].description + '</div>' +
+        '</div>' +
+        '<div class=\'row theme-registration-detail\'>' +
+        '    <div class=\'col-lg-4 theme-field\'>" . lang('registration_serial_number') . "</div>' +
+        '    <div class=\'col-lg-8\'>' + my_subscriptions[$('#subscription').val()].serial_number + '</div>' +
+        '</div>' +
+        '<div class=\'row theme-registration-detail\'>' +
+        '    <div class=\'col-lg-4 theme-field\'>" . lang('registration_expiry') . "</div>' +
+        '    <div class=\'col-lg-8\'>' + $.datepicker.formatDate('MM d, yy', new Date(my_subscriptions[$('#subscription').val()].expire)) + '</div>' +
+        '</div>' +
+        (my_subscriptions[$('#subscription').val()].evaluation == false ? '' :
+        '<div class=\'row theme-registration-detail\'>' +
+        '    <div class=\'col-lg-4 theme-field\'>" . lang('registration_type') . "</div>' +
+        '    <div class=\'col-lg-8\'>" . lang('registration_evaluation') . "</div>' +
+        '</div>') +
+        '</div>'
+    ;
+    if ($('#inline-help-hook').length != 0)
+       $('#inline-help-hook').html(info);
 }
 
 /**
@@ -241,8 +237,11 @@ function get_sdn_info() {
         },
         error: function(xhr, text, err) {
             // Don't display any errors if ajax request was aborted due to page redirect/reload
-            if (xhr['abort'] == undefined)
-                clearos_dialog_box('error', '" . lang('base_warning') . "', xhr.responseText.toString());
+            if (xhr['abort'] == undefined) {
+                var options = new Object();
+                options.type = 'warning';
+                clearos_dialog_box('data_err1', '" . lang('base_warning') . "', xhr.responseText.toString(), options);
+            }
         }
     });
 }
@@ -259,12 +258,16 @@ function get_registration_info() {
     $('#loading-systems').remove();
     $('#subscription').hide();
     $('#loading-subscriptions').remove();
-    $('#system').after(
-        '<div class=\'theme-loading-small\' id=\'loading-systems\' style=\'margin: 5px 0px 4px 0px; padding-top: 0px;\'>" . lang('registration_get_system_list') . "</div>'
-    );
-    $('#subscription').after(
-        '<div class=\'theme-loading-small\' id=\'loading-subscriptions\' style=\'margin: 5px 0px 4px 0px; padding-top: 0px;\'>" . lang('registration_get_subscription_list') . "</div>'
-    );
+
+    var sys_options = new Object();
+    sys_options.id = 'loading-systems';
+    sys_options.text = '" . lang('registration_get_system_list') . "';
+    $('#system').after(clearos_loading(sys_options));
+
+    var sub_options = new Object();
+    sub_options.id = 'loading-subscriptions';
+    sub_options.text = '" . lang('registration_get_subscription_list') . "';
+    $('#subscription').after(clearos_loading(sub_options));
     $.ajax({
         type: 'POST',
         dataType: 'json',
@@ -273,19 +276,19 @@ function get_registration_info() {
         success: function(data) {
             if (data.code > 0) {
                 $('#loading-systems').html(data.errmsg);
-                $('#loading-systems').removeClass('theme-loading-small');
                 $('#loading-subscriptions').html(data.errmsg);
-                $('#loading-subscriptions').removeClass('theme-loading-small');
                 // Code 4 is auth error...display some additional help RE: ClearCenter vs. ClearFoundation
                 if (data.code == 4 && data.help != undefined) {
-                    $('#registration_warning_box').show();
-                    $('#registration_warning').html(data.help);
+                    var options = new Object();
+                    options.type = 'warning';
+                    clearos_dialog_box('auth_err2', '" . lang('base_warning') . "', data.help, options);
                 }
                 reg_info_ok = false;
                 return;
             } else if (data.code < 0) {
-                $('#registration_warning_box').show();
-                $('#registration_warning').html(data.errmsg);
+                var options = new Object();
+                options.type = 'warning';
+                clearos_dialog_box('data_err3', '" . lang('base_warning') . "', data.errmsg, options);
                 reg_info_ok = false;
                 return;
             }
@@ -295,8 +298,8 @@ function get_registration_info() {
             $('#loading-subscriptions').remove();
             $('#subscription').show();
 
-            my_systems.length = 0;
-            my_subscriptions.length = 0;
+            my_systems = [];
+            my_subscriptions = [];
             for (index = 0; index < data.subscriptions.length; index++) {
                 var description = data.subscriptions[index].description;
                 if (data.subscriptions[index].id == eval_request)
@@ -336,8 +339,9 @@ function get_registration_info() {
         error: function(xhr, text, err) {
             // Don't display any errors if ajax request was aborted due to page redirect/reload
             if (xhr['abort'] == undefined) {
-                $('#registration_warning_box').show();
-                $('#registration_warning').html(xhr.responseText.toString());
+                var options = new Object();
+                options.type = 'warning';
+                clearos_dialog_box('data_err4', '" . lang('base_warning') . "', xhr.responseText.toString(), options);
             }
         }
     });
@@ -345,9 +349,9 @@ function get_registration_info() {
 
 function get_system_info() {
     if (!internet_connection) {
-        $('#registration_loading_box').hide();
-        $('#registration_warning_box').show();
-        $('#registration_warning').html('" . lang('registration_offline') . "');
+        var options = new Object();
+        options.type = 'warning';
+        clearos_dialog_box('data_err5', '" . lang('base_warning') . "', '" . lang('registration_offline') . "', options);
         return;
     }
 
@@ -363,13 +367,15 @@ function get_system_info() {
                     return;
                 }
                 $('#registration_loading_box').hide();
-                $('#registration_warning_box').show();
-                $('#registration_warning').html(data.errmsg);
+                var options = new Object();
+                options.type = 'warning';
+                clearos_dialog_box('data_err6', '" . lang('base_warning') . "', data.errmsg, options);
                 return;
             } else if (data.code < 0) {
                 $('#registration_loading_box').hide();
-                $('#registration_warning_box').show();
-                $('#registration_warning').html(data.errmsg);
+                var options = new Object();
+                options.type = 'warning';
+                clearos_dialog_box('data_err7', '" . lang('base_warning') . "', data.errmsg, options);
                 return;
             }
             $('#system_name_text').html(data.system_name);
@@ -404,8 +410,9 @@ function get_system_info() {
         error: function(xhr, text, err) {
             // Don't display any errors if ajax request was aborted due to page redirect/reload
             if (xhr['abort'] == undefined) {
-                $('#registration_warning_box').show();
-                $('#registration_warning').html(xhr.responseText.toString());
+                var options = new Object();
+                options.type = 'warning';
+                clearos_dialog_box('data_err8', '" . lang('base_warning') . "', xhr.responseText.toString(), options);
             }
         }
     });
@@ -424,7 +431,6 @@ function check_system_info() {
 
     // If an upgrade/re-install, disable system name...it is inherited from previously registered system reg
     if ($('#registration_type').val() > 0) {
-        //$('#system').show(); TODO - Need this?
         $('#system').attr('disabled', false);
         // Disable name field...it be inherited
         $('#system_name').attr('disabled', true);
@@ -520,6 +526,7 @@ function check_system_info() {
 function check_username_availability() {
     var username = $('#new_account_username').val();
     $('#new_account_username').hide();
+    $('.theme-validation-error').html('');
     $('#checking_username').remove();
     var options = new Object();
     options.text = '" . lang('registration_checking_username_availability') . "';
@@ -534,13 +541,10 @@ function check_username_availability() {
             if (data.code == 0) {
                 $('#new_account_username').show();
                 $('#checking_username').html('');
-                $('#checking_username').removeClass('theme-loading-small');
-                $('#checking_username').addClass('form-input-ok');
             } else if (data.code > 0) {
                 $('#new_account_username').show();
-                $('#checking_username').html('');
-                $('#checking_username').removeClass('theme-loading-small');
-                $('#checking_username').addClass('form-input-fail');
+                $('#checking_username').html('" . lang('registration_non_unique_username') . "');
+                $('#checking_username').addClass('theme-validation-error');
             } else if (data.code < 0) {
                 clearos_dialog_box('errmsg', '" . lang('base_warning') . "', data.errmsg);
             }
@@ -548,55 +552,30 @@ function check_username_availability() {
         error: function(xhr, text, err) {
             // Don't display any errors if ajax request was aborted due to page redirect/reload
             if (xhr['abort'] == undefined) {
-                $('#registration_warning_box').show();
-                $('#registration_warning').html(xhr.responseText.toString());
+                var options = new Object();
+                options.type = 'warning';
+                clearos_dialog_box('data_err9', '" . lang('base_warning') . "', xhr.responseText.toString(), options);
             }
         }
     });
 }
 
 function sdn_terms_of_service() {
-    $('#sdn_terms_of_service_dialog').remove();
-    $('#theme-page-container').append('<div id=\"sdn_terms_of_service_dialog\" title=\"" . lang('registration_terms_of_service') . "\">' +
-        '<div id=\'tos-text\' style=\'margin-top: 100;\'>' +
-        '  <div class=\'theme-loading-small\' id=\'tos-loading\'>" . lang('base_loading') . "</div>' +
-        '</div>' +
-      '</div>'
-    );
-    $('#sdn_terms_of_service_dialog').dialog({
-        autoOpen: true,
-        bgiframe: true,
-        modal: true,
-        resizable: false,
-        draggable: false,
-        closeOnEscape: false,
-        hide: 'fade',
-        height: 450,
-        width: 800,
-        buttons: {
-            '" . lang('base_close') . "': function() {
-                $(this).dialog('close');
-            }
-        }
-    });
-    $('.ui-dialog-titlebar-close').hide();
+    clearos_modal_infobox_open('sdn_tos');
     $.ajax({
         type: 'GET',
         dataType: 'json',
         url: '/app/registration/ajax/terms_of_service',
         success: function(data) {
             if (data.code == 0) {
-                $('#tos-loading').remove();
-                $('#tos-text').css('margin-top', 10);
-                $('#tos-text').css('text-align', 'left');
-                $('#tos-text').html(data.text);
+                $('#tos_content').html(data.text);
             } else {
-                $('#sdn_terms_of_service_dialog').dialog('close');
+                clearos_modal_infobox_close('sdn_tos');
                 clearos_dialog_box('errmsg', '" . lang('base_warning') . "', data.errmsg);
             }
         },
         error: function(xhr, text, err) {
-            $('#sdn_terms_of_service_dialog').dialog('close');
+            clearos_modal_infobox_close('sdn_tos');
             // Don't display any errors if ajax request was aborted due to page redirect/reload
             clearos_dialog_box('errmsg', '" . lang('base_warning') . "', xhr.responseText.toString());
         }
@@ -609,7 +588,7 @@ function show_extras(payload) {
         $('#theme_wizard_nav_next').show();
         $('#registration_extras_details').html('Installation complete'); // FIXME translate
     } else {
-        $('#registration_extras_details').html('<span class=\'theme-loading-small\'>' + payload.details + '</span>');
+        $('#registration_extras_details').html(clearos_loading('normal', payload.details));
         $('#theme_wizard_nav_next').hide();
         $('#registration_extras').show();
     }

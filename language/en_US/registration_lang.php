@@ -9,6 +9,7 @@ $lang['registration_app_tooltip'] = 'A single account can be used to register an
 $lang['registration_betas'] = 'Beta Programs';
 $lang['registration_business'] = 'Business - 10 or more employees';
 $lang['registration_checking_username_availability'] = 'Checking availability';
+$lang['registration_non_unique_username'] = 'Account username already in use - please select a new username.';
 $lang['registration_create_account'] = 'Create Account';
 $lang['registration_creating_an_account'] = 'Creating an Account';
 $lang['registration_creating_an_account_help'] = 'If you do not have a ClearCenter account, you can create one in just one step!';

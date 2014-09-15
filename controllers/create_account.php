@@ -71,7 +71,7 @@ class Create_Account extends ClearOS_Controller
         if ($form_ok) {
             if ($this->input->post('new_account_password') != $this->input->post('new_account_password_confirm')) {
                 $form_ok = FALSE;
-                $this->page->set_message(lang('base_password_and_verify_do_not_match'), 'warning');
+                $data['errmsg'] = lang('base_password_and_verify_do_not_match');
             }
         }
 

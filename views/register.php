@@ -49,7 +49,6 @@ if (! $this->session->userdata('account_created'))
 ///////////////////////////////////////////////////////////////////////////////
 // Form
 ///////////////////////////////////////////////////////////////////////////////
-// TODO: merge custom CSS
 
 echo form_open('registration/register', array('autocomplete' => 'off'));
 echo form_header(lang('registration_registration'));
@@ -73,3 +72,4 @@ echo field_button_set($buttons);
 echo form_footer();
 echo form_close();
 echo modal_info("wizard_next_showstopper", lang('base_error'), lang('registration_required'), array('type' => 'warning'));
+echo modal_info("sdn_tos", lang('registration_terms_of_service'), loading('normal', lang('base_loading'), array('id' => 'tos_content')), array('type' => 'info'));
