@@ -387,6 +387,7 @@ function get_system_info() {
             } else {
                 $('#reseller_field').hide();
             }
+            $('#wizard_next_showstopper').remove();
             $('#status_text').html('" . lang('registration_registered') . "');
             $('#account_text').html(data.account);
             $('#hostname_text').html(data.hostname);
@@ -587,11 +588,9 @@ function sdn_terms_of_service() {
 function show_extras(payload) {
     // Wizard: enable next button 
     if (payload.complete) {
-        $('#theme_wizard_nav_next').show();
         $('#registration_extras_details').html('Installation complete'); // FIXME translate
     } else {
         $('#registration_extras_details').html(clearos_loading('normal', payload.details));
-        $('#theme_wizard_nav_next').hide();
         $('#registration_extras').show();
     }
 }

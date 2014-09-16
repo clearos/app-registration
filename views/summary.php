@@ -80,3 +80,4 @@ echo infobox_highlight(
 );
 
 echo "</div>";
+echo modal_info("wizard_next_showstopper", lang('base_error'), lang('registration_loading_registration_information'), array('type' => 'warning'));
