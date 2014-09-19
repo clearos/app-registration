@@ -216,6 +216,10 @@ function get_sdn_info() {
                     window.location = '/app/registration/register';
                     return;
                 }
+            } else if (data.device_id != undefined && data.device_id > 0) {
+                // If already registered, redirect to summary page
+                if ($(location).attr('href').match('.*registration\/register($|.*$)') != null)
+                    window.location = '/app/registration';
             }
 
             if ($(location).attr('href').match('.*registration\/register($|.*$)') != null) {
