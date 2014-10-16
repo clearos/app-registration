@@ -195,6 +195,8 @@ function display_subscription_info() {
     ;
     if ($('#inline-help-hook').length != 0)
        $('#inline-help-hook').html(info);
+    else
+       $('#theme-sidebar-container div.box-footer').html(info);
 }
 
 /**
