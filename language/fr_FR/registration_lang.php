@@ -34,6 +34,7 @@ $lang['registration_new'] = 'New Install';
 $lang['registration_new_apps'] = 'New Marketplace Apps';
 $lang['registration_new_release'] = 'New Version Releases';
 $lang['registration_nfp'] = 'Non-Profit Organization';
+$lang['registration_non_unique_username'] = 'Account username already in use - please select a new username.';
 $lang['registration_offline'] = 'System registration/status is not available at this time.  It appears your system is not connected to the Internet - please check your <a href="/app/network/iface">network settings</a>, making sure you have at least one external interface/role configured.';
 $lang['registration_other'] = 'Other';
 $lang['registration_promotions'] = 'Promotions';
@@ -45,6 +46,7 @@ $lang['registration_registering_help'] = 'If you are upgrading or re-installing 
 $lang['registration_registration'] = 'System Registration';
 $lang['registration_request_evaluation'] = 'Request an evaluation';
 $lang['registration_request_purchase'] = 'Purchase a subscription';
+$lang['registration_required'] = 'Please register your system before continuing.';
 $lang['registration_reseller'] = 'Value Added Reseller';
 $lang['registration_reset'] = 'System reset complete.';
 $lang['registration_select_subscription_required'] = 'Subscription required to register.';
