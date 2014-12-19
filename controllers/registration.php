@@ -65,7 +65,6 @@ class Registration extends ClearOS_Controller
 
         $this->lang->load('registration');
         $this->load->library('registration/Registration');
-        $this->load->library('base/Product');
         $this->load->library('network/Hostname');
 
         $data['vendor'] = $this->session->userdata['sdn_org'];
