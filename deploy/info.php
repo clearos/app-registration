@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'registration';
-$app['version'] = '2.0.5';
+$app['version'] = '2.0.14';
 $app['release'] = '1';
 $app['vendor'] = 'ClearCenter';
 $app['packager'] = 'ClearCenter';
@@ -20,7 +20,7 @@ $app['tooltip'] = lang('registration_app_tooltip');
 
 $app['name'] = lang('registration_app_name');
 $app['category'] = lang('base_category_system');
-$app['subcategory'] = lang('base_subcategory_operating_system');
+$app['subcategory'] = lang('base_subcategory_settings');
 
 // Wizard extras
 $app['controllers']['registration']['wizard_name'] = lang('registration_app_name');
