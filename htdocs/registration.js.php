@@ -356,19 +356,22 @@ function get_registration_info() {
 }
 
 function get_system_info() {
-    if (!internet_connection) {
-        var options = new Object();
-        options.type = 'warning';
-        clearos_dialog_box('data_err5', '" . lang('base_warning') . "', '" . lang('registration_offline') . "', options);
-        return;
-    }
-
     $.ajax({
         type: 'GET',
         dataType: 'json',
         url: '/app/registration/ajax/get_system_info',
         success: function(data) {
-            if (data.code > 0) {
+            if (data.network_code == 2) {
+                var options = new Object();
+                options.type = 'warning';
+                clearos_dialog_box('data_err5', '" . lang('base_warning') . "', '" . lang('registration_offline') . "', options);
+                return;
+            } else if (data.network_code == 1) {
+                var options = new Object();
+                options.type = 'warning';
+                clearos_dialog_box('data_err5b', '" . lang('base_warning') . "', '" . lang('registration_dns_offline') . "', options);
+                return;
+            } else if (data.code > 0) {
                 // Code 3 == not registered
                 if (data.code == 3) {
                     window.location = '/app/registration/register';

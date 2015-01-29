@@ -16,8 +16,7 @@
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
-use \clearos\apps\registration\Registration as Registration;
-use \clearos\apps\base\Engine_Exception as Engine_Exception;
+use \clearos\apps\network\Network_Status as Network_Status;
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -166,8 +165,20 @@ class Ajax extends ClearOS_Controller
 
         try {
             sleep(2);
-            $this->load->library('registration/Registration');
-            echo $this->registration->get_system_info();
+            $this->load->library('network/Network_Status');
+            $status = $this->network_status->get_connection_status();
+
+            if ($status == Network_Status::STATUS_OFFLINE) {
+                $data['network_code'] = 2;
+                echo json_encode($data);
+            } else if ($status == Network_Status::STATUS_ONLINE_NO_DNS) {
+                $data['network_code'] = 1;
+                echo json_encode($data);
+            } else {
+                $data['network_code'] = 0;
+                $this->load->library('registration/Registration');
+                echo $this->registration->get_system_info();
+            }
         } catch (Exception $e) {
             echo json_encode(Array('code' => clearos_exception_code($e), 'errmsg' => clearos_exception_message($e)));
         }
