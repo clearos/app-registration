@@ -1,0 +1,13 @@
+<svg version="1.1" class="clearos-svg clearfoundation app-vendor-clearcenter app-free app-category-system app-sub-category-settings" viewBox="0 0 400 400" preserveAspectRatio="xMinYMin" xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
+<path fill="#AA0707" d="M91.666,184.647"/>
+<path fill="#AA0707" d="M123.245,247.805"/>
+<path fill="#AA0707" d="M91.666,184.647"/>
+<path fill="#AA0707" d="M123.245,247.805"/>
+<g>
+	<path fill="#686868" d="M122.774,95.534c-49.028,0-88.815,39.771-88.815,88.799c0,49.075,39.771,88.798,88.815,88.798
+		c49.059,0,88.814-39.724,88.814-88.798C211.588,135.307,171.833,95.534,122.774,95.534z M135.118,193.66v53.847h-22.755V193.66
+		H58.937v-22.49h53.426v-53.418h22.771v53.418h53.426v22.49H135.118z"/>
+	<path fill="#686868" d="M133.964,3v73.725c54.494,5.599,97.026,51.648,97.026,107.608c0,56-42.547,102.041-97.026,107.624V397
+		l117.185-80.587L366.041,397V3H133.964z"/>
+</g>
+</svg>
