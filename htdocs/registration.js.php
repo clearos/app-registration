@@ -88,8 +88,6 @@ $(document).ready(function() {
         check_system_info();
     });
 
-    $('#email').css('width', 250);
-
     toggle_mailer();
 
     $('#mailer').change(function(event) {
