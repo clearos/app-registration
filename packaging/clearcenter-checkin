@@ -67,7 +67,9 @@ $options = getopt($short_options);
 $registration = new Registration();
 
 try {
-    $registration->check_in();
+    $response = $registration->check_in();
+    if ($response != NULL)
+        $registration->set_subscription_notice($response);
 } catch (Exception $e) {
     echo clearos_exception_message($e) . "\n";
     clearos_log('clearcenter-checkin', clearos_exception_message($e));

@@ -93,6 +93,7 @@ class Registration extends Rest
 
     const FILE_CONFIG = '/etc/clearos/registration.conf';
     const FILE_REGISTERED_FLAG = '/var/clearos/registration/registered';
+    const FILE_SUBSCRIPTION_NOTICE = '/var/clearos/registration/subscription';
     const FILE_AUDIT = 'audit.json';
     const FOLDER_REGISTRATION = '/var/clearos/registration';
     const COMMAND_CAT = '/bin/cat';
@@ -189,6 +190,41 @@ class Registration extends Rest
     }
 
     /**
+     * Set the subscription notice file with relevant messages.
+     *
+     * @param array $response response from SDN
+     *
+     * @return void
+     *
+     * @throws Webservice_Exception
+     */
+
+    public function set_subscription_notice($response)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        try {
+            $file = new File(self::FILE_SUBSCRIPTION_NOTICE);
+
+            switch ((int)$response['code']) {
+                case 0:
+                    if ($file->exists())
+                        $file->delete();
+                    break;
+                case 14:
+                    if (!$file->exists())
+                        $file->create('webconfig', 'webconfig', '0640');
+                    $file->add_lines(json_encode($response) . "\n");
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception $e) {
+            // Ignore?
+        }
+    }
+
+    /**
      * Get registration info related to an account on SDN.
      *
      * @param string  $username username
@@ -211,6 +247,34 @@ class Registration extends Rest
             return $result;
         } catch (Exception $e) {
             throw new Webservice_Exception(clearos_exception_message($e), CLEAROS_ERROR);
+        }
+    }
+
+    /**
+     * Get subscription notice.
+     *
+     * @return array
+     *
+     */
+
+    public function get_subscription_notice()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        try {
+            $file = new File(self::FILE_SUBSCRIPTION_NOTICE);
+
+            if (!$file->exists())
+                return array();
+
+            $contents = end($file->get_contents_as_array());
+            $data = json_decode($contents, TRUE);
+
+            if ($data != NULL)
+                return $data;
+            return array();
+        } catch (Exception $e) {
+            return array();
         }
     }
 
@@ -384,7 +448,7 @@ class Registration extends Rest
     /**
      * Registration check-in.
      *
-     * @return void
+     * @return array
      * @throws Engine_Exception
      */
 
@@ -474,11 +538,34 @@ class Registration extends Rest
             }
             
             $result = $this->request('registration', 'check_in', $extras);
-            $response = json_decode($result);
-            if ($response->code != 0)
-                throw new Engine_Exception($response->errmsg, CLEAROS_ERROR);
+            return json_decode($result, TRUE);
         } catch (\Exception $e) {
             throw new Engine_Exception(clearos_exception_message($e), CLEAROS_ERROR);
+        }
+    }
+
+    /**
+     * Acknowledge a subscription notification.
+     *
+     * @param int $id ID
+     *
+     * @return Object JSON-encoded response
+     * @throws Webservice_Exception
+     */
+
+    public function acknowledge_subscription_notice($id)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        try {
+
+            $extras = array('id' => $id);
+
+            $result = $this->request('registration', 'acknowledge_subscription_notice', $extras);
+
+            return $result;
+        } catch (Exception $e) {
+            throw new Webservice_Exception(clearos_exception_message($e), CLEAROS_ERROR);
         }
     }
 
