@@ -68,8 +68,9 @@ $registration = new Registration();
 
 try {
     $response = $registration->check_in();
+    // There may be notifications from the SDN
     if ($response != NULL)
-        $registration->set_subscription_notice($response);
+        $registration->set_sdn_notice($response);
 } catch (Exception $e) {
     echo clearos_exception_message($e) . "\n";
     clearos_log('clearcenter-checkin', clearos_exception_message($e));

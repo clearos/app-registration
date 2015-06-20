@@ -7,7 +7,7 @@
  * @package    registration
  * @subpackage libraries
  * @author     ClearCenter <developer@clearcenter.com>
- * @copyright  2011 ClearCenter
+ * @copyright  2011-2015 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
  * @link       http://www.clearcenter.com/support/documentation/clearos/registration/
  */
@@ -80,7 +80,7 @@ clearos_load_library('base/Validation_Exception');
  * @package    registration
  * @subpackage libraries
  * @author     ClearCenter <developer@clearcenter.com>
- * @copyright  2011 ClearCenter
+ * @copyright  2011-2015 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
  * @link       http://www.clearcenter.com/support/documentation/clearos/registration/
  */
@@ -93,7 +93,7 @@ class Registration extends Rest
 
     const FILE_CONFIG = '/etc/clearos/registration.conf';
     const FILE_REGISTERED_FLAG = '/var/clearos/registration/registered';
-    const FILE_SUBSCRIPTION_NOTICE = '/var/clearos/registration/subscription';
+    const FILE_SDN_NOTICE = '/var/clearos/registration/sdn_notification';
     const FILE_AUDIT = 'audit.json';
     const FOLDER_REGISTRATION = '/var/clearos/registration';
     const COMMAND_CAT = '/bin/cat';
@@ -190,7 +190,7 @@ class Registration extends Rest
     }
 
     /**
-     * Set the subscription notice file with relevant messages.
+     * Set the SDN notice file with relevant message.
      *
      * @param array $response response from SDN
      *
@@ -199,25 +199,20 @@ class Registration extends Rest
      * @throws Webservice_Exception
      */
 
-    public function set_subscription_notice($response)
+    public function set_sdn_notice($response)
     {
         clearos_profile(__METHOD__, __LINE__);
 
         try {
-            $file = new File(self::FILE_SUBSCRIPTION_NOTICE);
+            $file = new File(self::FILE_SDN_NOTICE);
 
-            switch ((int)$response['code']) {
-                case 0:
-                    if ($file->exists())
-                        $file->delete();
-                    break;
-                case 14:
-                    if (!$file->exists())
-                        $file->create('webconfig', 'webconfig', '0640');
-                    $file->add_lines(json_encode($response) . "\n");
-                    break;
-                default:
-                    break;
+            if ((int)$response['code'] == 0) {
+                if ($file->exists())
+                    $file->delete();
+            } else if ((int)$response['code'] >= 1000) {
+                if (!$file->exists())
+                    $file->create('webconfig', 'webconfig', '0640');
+                $file->add_lines(json_encode($response) . "\n");
             }
         } catch (Exception $e) {
             // Ignore?
@@ -251,18 +246,18 @@ class Registration extends Rest
     }
 
     /**
-     * Get subscription notice.
+     * Get SDN notice.
      *
      * @return array
      *
      */
 
-    public function get_subscription_notice()
+    public function get_sdn_notice()
     {
         clearos_profile(__METHOD__, __LINE__);
 
         try {
-            $file = new File(self::FILE_SUBSCRIPTION_NOTICE);
+            $file = new File(self::FILE_SDN_NOTICE);
 
             if (!$file->exists())
                 return array();
@@ -270,8 +265,11 @@ class Registration extends Rest
             $contents = end($file->get_contents_as_array());
             $data = json_decode($contents, TRUE);
 
-            if ($data != NULL)
+            if ($data != NULL) {
+                if ($data['persistence'] == 'one_time')
+                    $file->delete();
                 return $data;
+            }
             return array();
         } catch (Exception $e) {
             return array();
@@ -545,7 +543,7 @@ class Registration extends Rest
     }
 
     /**
-     * Acknowledge a subscription notification.
+     * Acknowledge an SDN notification.
      *
      * @param int $id ID
      *
@@ -553,7 +551,7 @@ class Registration extends Rest
      * @throws Webservice_Exception
      */
 
-    public function acknowledge_subscription_notice($id)
+    public function acknowledge_sdn_notice($id)
     {
         clearos_profile(__METHOD__, __LINE__);
 
@@ -561,7 +559,7 @@ class Registration extends Rest
 
             $extras = array('id' => $id);
 
-            $result = $this->request('registration', 'acknowledge_subscription_notice', $extras);
+            $result = $this->request('registration', 'acknowledge_sdn_notice', $extras);
 
             return $result;
         } catch (Exception $e) {

@@ -222,12 +222,12 @@ class Ajax extends ClearOS_Controller
     }
 
     /**
-     * Ajax acknowledge subscription notice
+     * Ajax acknowledge SDN notice
      *
      * @return JSON
      */
 
-    function acknowledge_subscription_notice($id = 0)
+    function acknowledge_sdn_notice($id = 0)
     {
         clearos_profile(__METHOD__, __LINE__);
 
@@ -236,7 +236,7 @@ class Ajax extends ClearOS_Controller
 
         try {
             $this->load->library('registration/Registration');
-            echo $this->registration->acknowledge_subscription_notice($id);
+            echo $this->registration->acknowledge_sdn_notice($id);
         } catch (Exception $e) {
             echo json_encode(Array('code' => clearos_exception_code($e), 'errmsg' => clearos_exception_message($e)));
         }
