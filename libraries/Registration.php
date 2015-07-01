@@ -468,7 +468,7 @@ class Registration extends Rest
             
             if ($schedule == NULL || preg_match('/0 0 \* \* \*.*/', $schedule)) {
                 // Randomize future check-ins
-                $cron_entry = rand(0,59) . ' ' . rand(0,23) . ' * * * root /usr/sbin/clearcenter-checkin >/dev/null 2>&1";
+                $cron_entry = rand(0,59) . ' ' . rand(0,23) . ' * * * root /usr/sbin/clearcenter-checkin >/dev/null 2>&1';
                 $cron->delete_configlet($app);
                 $cron->add_configlet($app, $cron_entry);
                 return;
