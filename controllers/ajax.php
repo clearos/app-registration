@@ -59,7 +59,6 @@ class Ajax extends ClearOS_Controller
         clearos_profile(__METHOD__, __LINE__);
 
         header('Cache-Control: no-cache, must-revalidate');
-        header('Expires: Fri, 01 Jan 2010 05:00:00 GMT');
         header('Content-type: application/json');
 
         try {
@@ -81,7 +80,6 @@ class Ajax extends ClearOS_Controller
         clearos_profile(__METHOD__, __LINE__);
 
         header('Cache-Control: no-cache, must-revalidate');
-        header('Expires: Fri, 01 Jan 2010 05:00:00 GMT');
         header('Content-type: application/json');
 
         try {
@@ -107,7 +105,6 @@ class Ajax extends ClearOS_Controller
         clearos_profile(__METHOD__, __LINE__);
 
         header('Cache-Control: no-cache, must-revalidate');
-        header('Expires: Fri, 01 Jan 2010 05:00:00 GMT');
         header('Content-type: application/json');
 
         try {
@@ -132,7 +129,6 @@ class Ajax extends ClearOS_Controller
         clearos_profile(__METHOD__, __LINE__);
 
         header('Cache-Control: no-cache, must-revalidate');
-        header('Expires: Fri, 01 Jan 2010 05:00:00 GMT');
         header('Content-type: application/json');
 
         try {
@@ -161,7 +157,6 @@ class Ajax extends ClearOS_Controller
         clearos_profile(__METHOD__, __LINE__);
 
         header('Cache-Control: no-cache, must-revalidate');
-        header('Expires: Fri, 01 Jan 2010 05:00:00 GMT');
         header('Content-type: application/json');
 
         try {
@@ -184,7 +179,6 @@ class Ajax extends ClearOS_Controller
         clearos_profile(__METHOD__, __LINE__);
 
         header('Cache-Control: no-cache, must-revalidate');
-        header('Expires: Fri, 01 Jan 2010 05:00:00 GMT');
         header('Content-type: application/json');
 
         try {
@@ -206,12 +200,32 @@ class Ajax extends ClearOS_Controller
         clearos_profile(__METHOD__, __LINE__);
 
         header('Cache-Control: no-cache, must-revalidate');
-        header('Expires: Fri, 01 Jan 2010 05:00:00 GMT');
         header('Content-type: application/json');
 
         try {
             $this->load->library('registration/Registration');
             echo $this->registration->terms_of_service();
+        } catch (Exception $e) {
+            echo json_encode(Array('code' => clearos_exception_code($e), 'errmsg' => clearos_exception_message($e)));
+        }
+    }
+
+    /**
+     * Ajax acknowledge SDN notice
+     *
+     * @return JSON
+     */
+
+    function acknowledge_sdn_notice($id = 0)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+
+        try {
+            $this->load->library('registration/Registration');
+            echo $this->registration->acknowledge_sdn_notice($id);
         } catch (Exception $e) {
             echo json_encode(Array('code' => clearos_exception_code($e), 'errmsg' => clearos_exception_message($e)));
         }

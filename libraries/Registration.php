@@ -7,7 +7,7 @@
  * @package    registration
  * @subpackage libraries
  * @author     ClearCenter <developer@clearcenter.com>
- * @copyright  2011 ClearCenter
+ * @copyright  2011-2015 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
  * @link       http://www.clearcenter.com/support/documentation/clearos/registration/
  */
@@ -39,26 +39,28 @@ clearos_load_language('registration');
 //--------
 
 use \clearos\apps\base\Configuration_File as Configuration_File;
+use \clearos\apps\base\Country as Country;
 use \clearos\apps\base\File as File;
 use \clearos\apps\base\Folder as Folder;
-use \clearos\apps\suva\Suva as Suva;
-use \clearos\apps\base\Country as Country;
-use \clearos\apps\tasks\Cron as Cron;
 use \clearos\apps\base\Shell as Shell;
 use \clearos\apps\clearcenter\Rest as Rest;
 use \clearos\apps\mode\Mode_Engine as Mode_Engine;
 use \clearos\apps\mode\Mode_Factory as Mode_Factory;
+use \clearos\apps\network\Network as Network;
+use \clearos\apps\suva\Suva as Suva;
+use \clearos\apps\tasks\Cron as Cron;
 
 clearos_load_library('base/Configuration_File');
+clearos_load_library('base/Country');
 clearos_load_library('base/File');
 clearos_load_library('base/Folder');
-clearos_load_library('suva/Suva');
-clearos_load_library('base/Country');
-clearos_load_library('tasks/Cron');
 clearos_load_library('base/Shell');
 clearos_load_library('clearcenter/Rest');
 clearos_load_library('mode/Mode_Engine');
 clearos_load_library('mode/Mode_Factory');
+clearos_load_library('network/Network');
+clearos_load_library('suva/Suva');
+clearos_load_library('tasks/Cron');
 
 // Exceptions
 //-----------
@@ -80,7 +82,7 @@ clearos_load_library('base/Validation_Exception');
  * @package    registration
  * @subpackage libraries
  * @author     ClearCenter <developer@clearcenter.com>
- * @copyright  2011 ClearCenter
+ * @copyright  2011-2015 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
  * @link       http://www.clearcenter.com/support/documentation/clearos/registration/
  */
@@ -93,6 +95,7 @@ class Registration extends Rest
 
     const FILE_CONFIG = '/etc/clearos/registration.conf';
     const FILE_REGISTERED_FLAG = '/var/clearos/registration/registered';
+    const FILE_SDN_NOTICE = '/var/clearos/registration/sdn_notification';
     const FILE_AUDIT = 'audit.json';
     const FOLDER_REGISTRATION = '/var/clearos/registration';
     const COMMAND_CAT = '/bin/cat';
@@ -189,6 +192,36 @@ class Registration extends Rest
     }
 
     /**
+     * Set the SDN notice file with relevant message.
+     *
+     * @param array $response response from SDN
+     *
+     * @return void
+     *
+     * @throws Webservice_Exception
+     */
+
+    public function set_sdn_notice($response)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        try {
+            $file = new File(self::FILE_SDN_NOTICE);
+
+            if ((int)$response['code'] == 0) {
+                if ($file->exists())
+                    $file->delete();
+            } else if ((int)$response['code'] >= 1000) {
+                if (!$file->exists())
+                    $file->create('webconfig', 'webconfig', '0640');
+                $file->add_lines(json_encode($response) . "\n");
+            }
+        } catch (Exception $e) {
+            // Ignore?
+        }
+    }
+
+    /**
      * Get registration info related to an account on SDN.
      *
      * @param string  $username username
@@ -211,6 +244,37 @@ class Registration extends Rest
             return $result;
         } catch (Exception $e) {
             throw new Webservice_Exception(clearos_exception_message($e), CLEAROS_ERROR);
+        }
+    }
+
+    /**
+     * Get SDN notice.
+     *
+     * @return array
+     *
+     */
+
+    public function get_sdn_notice()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        try {
+            $file = new File(self::FILE_SDN_NOTICE);
+
+            if (!$file->exists())
+                return array();
+
+            $contents = end($file->get_contents_as_array());
+            $data = json_decode($contents, TRUE);
+
+            if ($data != NULL) {
+                if ($data['persistence'] == 'one_time')
+                    $file->delete();
+                return $data;
+            }
+            return array();
+        } catch (Exception $e) {
+            return array();
         }
     }
 
@@ -384,7 +448,7 @@ class Registration extends Rest
     /**
      * Registration check-in.
      *
-     * @return void
+     * @return array
      * @throws Engine_Exception
      */
 
@@ -404,19 +468,11 @@ class Registration extends Rest
             if ($cron->exists_configlet($app))
                 $schedule = $cron->get_configlet($app);
             
-            while (TRUE) {
-                $dow = rand(0, 6);
-                if ($dow != date('w'))
-                    break;
-            }
-            if ($schedule == NULL || preg_match('/0 0 \* \* \*.*/', $schedule)) {
+            if ($schedule == NULL || preg_match('/\d+ \d+ \* \* \d+.*|0 0 \* \* \*.*/', $schedule)) {
                 // Randomize future check-ins
-                $cron_entry = rand(0,59) . ' ' . rand(0,23) . ' * * ' . $dow . 
-                    " root /usr/sbin/clearcenter-checkin >/dev/null 2>&1";
+                $cron_entry = rand(0,59) . ' ' . rand(0,23) . ' * * * root /usr/sbin/clearcenter-checkin >/dev/null 2>&1';
                 $cron->delete_configlet($app);
                 $cron->add_configlet($app, $cron_entry);
-                // Let's send the webservice call at a randomized time in the future
-                // to prevent bottlenecks
                 return;
             }
         } catch (Exception $e) {
@@ -430,17 +486,27 @@ class Registration extends Rest
             $suva = new Suva();
             $extras['device_id'] = $suva->get_device_name();
 
-            // Mode
-            //-----
+            // System Mode
+            //------------
             if (clearos_library_installed('mode/Mode_Engine')) {
                 try {
                     $mode_object = Mode_Factory::create();
-                    $extras['mode'] = $mode_object->get_mode();
+                    $extras['system_mode'] = $mode_object->get_mode();
                 } catch (\Exception $e) {
                     // Not really worried about
                 }
             }
 
+            // Network Mode
+            //-------------
+            if (clearos_library_installed('network/Network')) {
+                try {
+                    $network = new Network();
+                    $extras['network_mode'] = $network->get_mode();
+                } catch (\Exception $e) {
+                    // Not really worried about
+                }
+            }
             // Uptime
             //-------
             $shell = new Shell();
@@ -474,11 +540,34 @@ class Registration extends Rest
             }
             
             $result = $this->request('registration', 'check_in', $extras);
-            $response = json_decode($result);
-            if ($response->code != 0)
-                throw new Engine_Exception($response->errmsg, CLEAROS_ERROR);
+            return json_decode($result, TRUE);
         } catch (\Exception $e) {
             throw new Engine_Exception(clearos_exception_message($e), CLEAROS_ERROR);
+        }
+    }
+
+    /**
+     * Acknowledge an SDN notification.
+     *
+     * @param int $id ID
+     *
+     * @return Object JSON-encoded response
+     * @throws Webservice_Exception
+     */
+
+    public function acknowledge_sdn_notice($id)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        try {
+
+            $extras = array('id' => $id);
+
+            $result = $this->request('registration', 'acknowledge_sdn_notice', $extras);
+
+            return $result;
+        } catch (Exception $e) {
+            throw new Webservice_Exception(clearos_exception_message($e), CLEAROS_ERROR);
         }
     }
 
