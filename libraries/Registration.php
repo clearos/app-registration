@@ -39,26 +39,28 @@ clearos_load_language('registration');
 //--------
 
 use \clearos\apps\base\Configuration_File as Configuration_File;
+use \clearos\apps\base\Country as Country;
 use \clearos\apps\base\File as File;
 use \clearos\apps\base\Folder as Folder;
-use \clearos\apps\suva\Suva as Suva;
-use \clearos\apps\base\Country as Country;
-use \clearos\apps\tasks\Cron as Cron;
 use \clearos\apps\base\Shell as Shell;
 use \clearos\apps\clearcenter\Rest as Rest;
 use \clearos\apps\mode\Mode_Engine as Mode_Engine;
 use \clearos\apps\mode\Mode_Factory as Mode_Factory;
+use \clearos\apps\network\Network as Network;
+use \clearos\apps\suva\Suva as Suva;
+use \clearos\apps\tasks\Cron as Cron;
 
 clearos_load_library('base/Configuration_File');
+clearos_load_library('base/Country');
 clearos_load_library('base/File');
 clearos_load_library('base/Folder');
-clearos_load_library('suva/Suva');
-clearos_load_library('base/Country');
-clearos_load_library('tasks/Cron');
 clearos_load_library('base/Shell');
 clearos_load_library('clearcenter/Rest');
 clearos_load_library('mode/Mode_Engine');
 clearos_load_library('mode/Mode_Factory');
+clearos_load_library('network/Network');
+clearos_load_library('suva/Suva');
+clearos_load_library('tasks/Cron');
 
 // Exceptions
 //-----------
@@ -466,7 +468,7 @@ class Registration extends Rest
             if ($cron->exists_configlet($app))
                 $schedule = $cron->get_configlet($app);
             
-            if ($schedule == NULL || preg_match('/0 0 \* \* \*.*/', $schedule)) {
+            if ($schedule == NULL || preg_match('/\d+ \d+ \* \* \d+.*|0 0 \* \* \*.*/', $schedule)) {
                 // Randomize future check-ins
                 $cron_entry = rand(0,59) . ' ' . rand(0,23) . ' * * * root /usr/sbin/clearcenter-checkin >/dev/null 2>&1';
                 $cron->delete_configlet($app);
@@ -484,17 +486,27 @@ class Registration extends Rest
             $suva = new Suva();
             $extras['device_id'] = $suva->get_device_name();
 
-            // Mode
-            //-----
+            // System Mode
+            //------------
             if (clearos_library_installed('mode/Mode_Engine')) {
                 try {
                     $mode_object = Mode_Factory::create();
-                    $extras['mode'] = $mode_object->get_mode();
+                    $extras['system_mode'] = $mode_object->get_mode();
                 } catch (\Exception $e) {
                     // Not really worried about
                 }
             }
 
+            // Network Mode
+            //-------------
+            if (clearos_library_installed('network/Network')) {
+                try {
+                    $network = new Network();
+                    $extras['network_mode'] = $network->get_mode();
+                } catch (\Exception $e) {
+                    // Not really worried about
+                }
+            }
             // Uptime
             //-------
             $shell = new Shell();
