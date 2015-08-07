@@ -212,7 +212,7 @@ function get_sdn_info() {
         success: function(data) {
             // Check to see if it's registered already
             if (data.device_id != undefined && data.device_id < 0) {
-                if ($(location).attr('href').match('.*registration$') != null) {
+                if ($(location).attr('href').match('.*registration($|\#$)') != null) {
                     window.location = '/app/registration/register';
                     return;
                 }
@@ -235,7 +235,7 @@ function get_sdn_info() {
                     $('#subscription_field').hide();
                     $('#validate_subscription').remove();
                 }
-            } else if ($(location).attr('href').match('.*registration$') != null) {
+	    } else if ($(location).attr('href').match('.*registration($|\#$)') != null) {
                 get_system_info();
             }
         },
