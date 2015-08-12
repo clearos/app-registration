@@ -1,7 +1,7 @@
 
 Name: app-registration
 Epoch: 1
-Version: 1.6.8
+Version: 1.7.0
 Release: 1%{dist}
 Summary: System Registration
 License: Proprietary
@@ -52,8 +52,6 @@ fi
 
 [ -x /usr/clearos/apps/registration/deploy/upgrade ] && /usr/clearos/apps/registration/deploy/upgrade
 
-
-
 exit 0
 
 %preun
@@ -66,8 +64,6 @@ if [ $1 -eq 0 ]; then
     logger -p local6.notice -t installer 'app-registration-core - uninstalling'
     [ -x /usr/clearos/apps/registration/deploy/uninstall ] && /usr/clearos/apps/registration/deploy/uninstall
 fi
-
-
 
 exit 0
 
