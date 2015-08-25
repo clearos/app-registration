@@ -126,18 +126,7 @@ class Registration extends ClearOS_Controller
         $data['registration_type_options'] = $this->registration->get_registration_options();
         $data['system_options'] = array(0 => lang('base_select'));
         $data['subscription_options'] = array(0 => lang('base_select'));
-        $data['environment_options'] = array(
-            0 => lang('base_select'),
-            'home' => lang('registration_home'),
-            'soho' => lang('registration_soho'),
-            'smb' => lang('registration_smb'),
-            'business' => lang('registration_business'),
-            'smb_multi' => lang('registration_smb_multi'),
-            'edu' => lang('registration_edu'),
-            'nfp' => lang('registration_nfp'),
-            'gov' => lang('registration_gov'),
-            'other' => lang('registration_other')
-        );
+        $data['environment_options'] = $this->registration->get_environment_options();
 
         $this->page->view_form('registration/register', $data, lang('registration_registration'));
     }

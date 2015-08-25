@@ -42,6 +42,7 @@ use \clearos\apps\base\Configuration_File as Configuration_File;
 use \clearos\apps\base\Country as Country;
 use \clearos\apps\base\File as File;
 use \clearos\apps\base\Folder as Folder;
+use \clearos\apps\base\Product as Product;
 use \clearos\apps\base\Shell as Shell;
 use \clearos\apps\clearcenter\Rest as Rest;
 use \clearos\apps\mode\Mode_Engine as Mode_Engine;
@@ -54,6 +55,7 @@ clearos_load_library('base/Configuration_File');
 clearos_load_library('base/Country');
 clearos_load_library('base/File');
 clearos_load_library('base/Folder');
+clearos_load_library('base/Product');
 clearos_load_library('base/Shell');
 clearos_load_library('clearcenter/Rest');
 clearos_load_library('mode/Mode_Engine');
@@ -409,6 +411,41 @@ class Registration extends Rest
             self::REGISTER_NEW => lang('registration_new'),
             self::REGISTER_EXISTING => lang('registration_existing')
         );
+        return $options;
+    }
+
+    /**
+     * Returns a list of environment types.
+     *
+     * @return array
+     */
+
+    function get_environment_options()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        $product = new Product();
+        if ($product->is_home()) {
+            $options = array(
+                0 => lang('base_select'),
+                'home' => lang('registration_home'),
+                'soho' => lang('registration_soho'),
+                'other' => lang('registration_other')
+            );
+        } else {
+            $options = array(
+                0 => lang('base_select'),
+                'home' => lang('registration_home'),
+                'soho' => lang('registration_soho'),
+                'smb' => lang('registration_smb'),
+                'business' => lang('registration_business'),
+                'smb_multi' => lang('registration_smb_multi'),
+                'edu' => lang('registration_edu'),
+                'nfp' => lang('registration_nfp'),
+                'gov' => lang('registration_gov'),
+                'other' => lang('registration_other')
+            );
+        }
         return $options;
     }
 
