@@ -60,8 +60,6 @@ var lang_dns_offline = '<?php echo lang('registration_dns_offline'); ?>';
 var reg_info_ok = false;
 var my_systems = new Array();
 var my_subscriptions = new Array();
-var home_evals = new Array();
-var business_evals = new Array();
 var eval_request = -1;
 var purchase_request = -2;
 
