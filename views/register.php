@@ -58,6 +58,7 @@ echo field_password('sdn_form_password', $sdn_form_password, lang('base_password
 echo field_dropdown('registration_type', $registration_type_options, $registration_type, lang('registration_type'), FALSE);
 echo field_dropdown('system', $system_options, 0, lang('registration_system_list'), FALSE);
 echo field_dropdown('subscription', $subscription_options, 0, lang('registration_subscription_list'), FALSE);
+echo field_input('registration_unit', 1000, 'unit', FALSE, array('hide_field' => TRUE));
 echo field_input('system_name', $system_name, lang('registration_system_name'), FALSE);
 echo field_dropdown('environment', $environment_options, $environment, lang('registration_environment'), FALSE);
 echo field_info('terms_of_service', 

@@ -32,11 +32,36 @@ clearos_load_language('base');
 
 header('Content-Type: application/x-javascript');
 
-echo "
+?>
+var lang_error = '<?php echo lang('base_error'); ?>';
+var lang_warning = '<?php echo lang('base_warning'); ?>';
+var lang_select = '<?php echo lang('base_select'); ?>';
+var lang_checking_username_availability = '<?php echo lang('registration_checking_username_availability'); ?>';
+var lang_subscription_details = '<?php echo lang('registration_subscription_details'); ?>';
+var lang_description = '<?php echo lang('base_description'); ?>';
+var lang_serial_number = '<?php echo lang('registration_serial_number'); ?>';
+var lang_details = '<?php echo lang('base_details'); ?>';
+var lang_cost = '<?php echo lang('registration_cost'); ?>';
+var lang_type = '<?php echo lang('registration_type'); ?>';
+var lang_expiry = '<?php echo lang('registration_expiry'); ?>';
+var lang_evaluation = '<?php echo lang('registration_evaluation'); ?>';
+var lang_request_evaluation = '<?php echo lang('registration_request_evaluation'); ?>';
+var lang_request_purchase = '<?php echo lang('registration_request_purchase'); ?>';
+var lang_learn_more = '<?php echo lang('registration_learn_more'); ?>';
+var lang_go = '<?php echo lang('base_go'); ?>';
+var lang_account = '<?php echo lang('registration_account'); ?>';
+var lang_register_system = '<?php echo lang('registration_register_system'); ?>';
+var lang_registered = '<?php echo lang('registration_registered'); ?>';
+var lang_non_unique_username = '<?php echo lang('registration_non_unique_username'); ?>';
+var lang_get_system_list = '<?php echo lang('registration_get_system_list'); ?>';
+var lang_get_subscription_list = '<?php echo lang('registration_get_subscription_list'); ?>';
+var lang_offline = '<?php echo lang('registration_offline'); ?>';
+var lang_dns_offline = '<?php echo lang('registration_dns_offline'); ?>';
 var reg_info_ok = false;
-var reg_default_name = '" . lang('registration_my_server') . "';
 var my_systems = new Array();
 var my_subscriptions = new Array();
+var home_evals = new Array();
+var business_evals = new Array();
 var eval_request = -1;
 var purchase_request = -2;
 
@@ -78,10 +103,10 @@ $(document).ready(function() {
         if ($('#registration_type').val() > 0) {
             $('#system_field').show();
             $('#validate_system_name').remove();
-            $('#system').after('<input type=\'hidden\' id=\'validate_system\' name=\'validate_system\' value=\'1\'>');
+            $('#system').after('<input type="hidden" id="validate_system" name="validate_system" value="1">');
         } else {
             $('#system_field').hide();
-            $('#system_name').after('<input type=\'hidden\' id=\'validate_system_name\' name=\'validate_system_name\' value=\'1\'>');
+            $('#system_name').after('<input type="hidden" id="validate_system_name" name="validate_system_name" value="1">');
             $('#validate_system').remove();
         }
         get_registration_info();
@@ -94,16 +119,17 @@ $(document).ready(function() {
         toggle_mailer();
     });
 
-    $('#subscription').change(function(event) {
+    $('#subscription').click(function(event) {
+        $('#registration-subscription-details').remove();
         if ($('#subscription').val() == 0) {
-            $('#subscription_details').remove();
         } else if ($('#subscription').val() == eval_request) {
-            $('#subscription_details').remove();
             window.open(my_subscriptions[$('#subscription').val()].url);
             return true;
         } else if ($('#subscription').val() == purchase_request) {
-            $('#subscription_details').remove();
             window.open(my_subscriptions[$('#subscription').val()].url);
+            return true;
+        } else if ($('#subscription').val() <= -1000) {
+            display_subscription_info();
             return true;
         } else {
             // Dump info about subscription
@@ -137,6 +163,11 @@ $(document).ready(function() {
         $('.theme-validation-error').hide();
         get_registration_info();
     });
+
+    if ($(location).attr('href').match('.*registration\/updating.*') != null) {
+        console.log('ben');
+        registration_is_updating();
+    }
 });
 
 /**
@@ -166,31 +197,47 @@ function toggle_mailer() {
  */
 
 function display_subscription_info() {
-    $('#subscription_details').remove();
     if ($('#subscription').val() == 0)
         return;
 
-    var info = '<div id=\'registration-subscription-details\'>' +
-        '<h3>" . lang('registration_subscription_details') . "</h3>' +
-        '<div class=\'row theme-registration-detail\'>' +
-        '    <div class=\'col-lg-4 theme-field\'>" . lang('base_description') . "</div>' +
-        '    <div class=\'col-lg-8\'>' + my_subscriptions[$('#subscription').val()].description + '</div>' +
-        '</div>' +
-        '<div class=\'row theme-registration-detail\'>' +
-        '    <div class=\'col-lg-4 theme-field\'>" . lang('registration_serial_number') . "</div>' +
-        '    <div class=\'col-lg-8\'>' + my_subscriptions[$('#subscription').val()].serial_number + '</div>' +
-        '</div>' +
-        '<div class=\'row theme-registration-detail\'>' +
-        '    <div class=\'col-lg-4 theme-field\'>" . lang('registration_expiry') . "</div>' +
-        '    <div class=\'col-lg-8\'>' + $.datepicker.formatDate('MM d, yy', new Date(my_subscriptions[$('#subscription').val()].expire)) + '</div>' +
-        '</div>' +
-        (my_subscriptions[$('#subscription').val()].evaluation == false ? '' :
-        '<div class=\'row theme-registration-detail\'>' +
-        '    <div class=\'col-lg-4 theme-field\'>" . lang('registration_type') . "</div>' +
-        '    <div class=\'col-lg-8\'>" . lang('registration_evaluation') . "</div>' +
-        '</div>') +
+    var options = {
+        row: {
+            classes: 'theme-registration-detail'
+        },
+        key: {
+            width: 4
+        },
+        value: {
+            width: 8
+        }
+    };
+    var anchor_options = {
+        external: true,
+        target: '_blank',
+        buttons: 'extra-small' 
+    }
+    var info = 
+        '<div id="registration-subscription-details">' +
+        '<h3>' + lang_subscription_details + '</h3>' +
+        clearos_key_value_pair(lang_description, my_subscriptions[$('#subscription').val()].description, options) +
+        (my_subscriptions[$('#subscription').val()].serial_number == '' ? '' :
+        clearos_key_value_pair(lang_serial_number, my_subscriptions[$('#subscription').val()].serial_number, options)) +
+        clearos_key_value_pair(lang_expiry, $.datepicker.formatDate('MM d, yy', new Date(my_subscriptions[$('#subscription').val()].expire)), options) +
+        (my_subscriptions[$('#subscription').val()].evaluation == true && my_subscriptions[$('#subscription').val()].serial_number != '' ?
+        clearos_key_value_pair(lang_type, lang_evaluation, options) : '') +
+        (my_subscriptions[$('#subscription').val()].cost == undefined || my_subscriptions[$('#subscription').val()].cost == '' ? '' :
+        clearos_key_value_pair(lang_cost, my_subscriptions[$('#subscription').val()].cost, options)) +
+        (my_subscriptions[$('#subscription').val()].details == undefined || my_subscriptions[$('#subscription').val()].details == '' ? '' :
+        clearos_key_value_pair(lang_details, my_subscriptions[$('#subscription').val()].details, options)) +
+        (my_subscriptions[$('#subscription').val()].learn_more_url == undefined ? '' :
+        clearos_key_value_pair(lang_learn_more, clearos_anchor(my_subscriptions[$('#subscription').val()].learn_more_url, lang_go, anchor_options), options)) +
         '</div>'
     ;
+    
+    // If unit is defined, update hidden input form
+    if (my_subscriptions[$('#subscription').val()].unit != undefined)
+        $('#registration_unit').val(my_subscriptions[$('#subscription').val()].unit);
+
     if ($('#inline-help-hook').length != 0)
        $('#inline-help-hook').html(info);
     else
@@ -212,7 +259,7 @@ function get_sdn_info() {
         success: function(data) {
             // Check to see if it's registered already
             if (data.device_id != undefined && data.device_id < 0) {
-                if ($(location).attr('href').match('.*registration($|\#$)') != null) {
+                if ($(location).attr('href').match('.*registration($|\#|\/$)') != null) {
                     window.location = '/app/registration/register';
                     return;
                 }
@@ -225,17 +272,17 @@ function get_sdn_info() {
             if ($(location).attr('href').match('.*registration\/register($|.*$)') != null) {
                 // Add SDN organization to differentiate the expected account information
                 if (data.sdn_org != undefined) {
-                    $('#sdn_form_username_label').html('" . lang('registration_account') . " (' + data.sdn_org + ')');
-                    $('#register').val('" . lang('registration_register_system') . "');
+                    $('#sdn_form_username_label').html(lang_account + ' (' + data.sdn_org + ')');
+                    $('#register').val(lang_register_system);
                 }
                 if (data.supported != undefined && data.supported) {
                     $('#subscription_field').show();
-                    $('#subscription').after('<input type=\'hidden\' id=\'validate_subscription\' name=\'validate_subscription\' value=\'1\'>');
+                    $('#subscription').after('<input type="hidden" id="validate_subscription" name="validate_subscription" value="1">');
                 } else {
                     $('#subscription_field').hide();
                     $('#validate_subscription').remove();
                 }
-	    } else if ($(location).attr('href').match('.*registration($|\#$)') != null) {
+	    } else if ($(location).attr('href').match('.*registration($|\#|\/$)') != null) {
                 get_system_info();
             }
         },
@@ -244,7 +291,7 @@ function get_sdn_info() {
             if (xhr['abort'] == undefined) {
                 var options = new Object();
                 options.type = 'warning';
-                clearos_dialog_box('data_err1', '" . lang('base_warning') . "', xhr.responseText.toString(), options);
+                clearos_dialog_box('data_err1', lang_warning, xhr.responseText.toString(), options);
             }
         }
     });
@@ -266,13 +313,13 @@ function get_registration_info() {
     var sys_options = new Object();
     sys_options.id = 'loading-systems';
     sys_options.form_control = true;
-    sys_options.text = '" . lang('registration_get_system_list') . "';
+    sys_options.text = lang_get_system_list;
     $('#system').after(clearos_loading(sys_options));
 
     var sub_options = new Object();
     sub_options.id = 'loading-subscriptions';
     sub_options.form_control = true;
-    sub_options.text = '" . lang('registration_get_subscription_list') . "';
+    sub_options.text = lang_get_subscription_list;
     $('#subscription').after(clearos_loading(sub_options));
     $.ajax({
         type: 'POST',
@@ -287,14 +334,14 @@ function get_registration_info() {
                 if (data.code == 4 && data.help != undefined) {
                     var options = new Object();
                     options.type = 'warning';
-                    clearos_dialog_box('auth_err2', '" . lang('base_warning') . "', data.help, options);
+                    clearos_dialog_box('auth_err2', lang_warning, data.help, options);
                 }
                 reg_info_ok = false;
                 return;
             } else if (data.code < 0) {
                 var options = new Object();
                 options.type = 'warning';
-                clearos_dialog_box('data_err3', '" . lang('base_warning') . "', data.errmsg, options);
+                clearos_dialog_box('data_err3', lang_warning, data.errmsg, options);
                 reg_info_ok = false;
                 return;
             }
@@ -309,9 +356,9 @@ function get_registration_info() {
             for (index = 0; index < data.subscriptions.length; index++) {
                 var description = data.subscriptions[index].description;
                 if (data.subscriptions[index].id == eval_request)
-                    description = '" . lang('registration_request_evaluation') . "'; 
+                    description = lang_request_evaluation; 
                 else if (data.subscriptions[index].id == purchase_request)
-                    description = '" . lang('registration_request_purchase') . "'; 
+                    description = lang_request_purchase; 
                 my_subscriptions[data.subscriptions[index].id] = {
                     serial_number: data.subscriptions[index].serial_number,
                     assigned: data.subscriptions[index].assigned,
@@ -319,6 +366,10 @@ function get_registration_info() {
                     description: description,
                     purchased: data.subscriptions[index].purchased,
                     url: data.subscriptions[index].url,
+                    details: data.subscriptions[index].details,
+                    cost: data.subscriptions[index].cost,
+                    unit: data.subscriptions[index].unit,
+                    learn_more_url: data.subscriptions[index].learn_more_url,
                     evaluation: data.subscriptions[index].evaluation
                 };
             }
@@ -328,8 +379,8 @@ function get_registration_info() {
                 .end()
             ;
             // TODO - IE8 workaround
-            //$('#system').append( new Option('" . lang('base_select') . "', 0));
-            $('#system').append($('<option value=\"0\">" . lang('base_select') . "</option>'));
+            //$('#system').append( new Option(lang_select, 0));
+            $('#system').append($('<option value="0">' + lang_select + '</option>'));
             for (index = 0; index < data.systems.length; index++) {
                 my_systems[data.systems[index].id] = {
                     subscription_id: data.systems[index].subscription_id,
@@ -347,7 +398,7 @@ function get_registration_info() {
             if (xhr['abort'] == undefined) {
                 var options = new Object();
                 options.type = 'warning';
-                clearos_dialog_box('data_err4', '" . lang('base_warning') . "', xhr.responseText.toString(), options);
+                clearos_dialog_box('data_err4', lang_warning, xhr.responseText.toString(), options);
             }
         }
     });
@@ -362,12 +413,12 @@ function get_system_info() {
             if (data.network_code == 2) {
                 var options = new Object();
                 options.type = 'warning';
-                clearos_dialog_box('data_err5', '" . lang('base_warning') . "', '" . lang('registration_offline') . "', options);
+                clearos_dialog_box('data_err5', lang_warning, lang_offline, options);
                 return;
             } else if (data.network_code == 1) {
                 var options = new Object();
                 options.type = 'warning';
-                clearos_dialog_box('data_err5b', '" . lang('base_warning') . "', '" . lang('registration_dns_offline') . "', options);
+                clearos_dialog_box('data_err5b', lang_warning, lang_dns_offline, options);
                 return;
             } else if (data.code > 0) {
                 // Code 3 == not registered
@@ -378,13 +429,13 @@ function get_system_info() {
                 $('#registration_loading_box').hide();
                 var options = new Object();
                 options.type = 'warning';
-                clearos_dialog_box('data_err6', '" . lang('base_warning') . "', data.errmsg, options);
+                clearos_dialog_box('data_err6', lang_warning, data.errmsg, options);
                 return;
             } else if (data.code < 0) {
                 $('#registration_loading_box').hide();
                 var options = new Object();
                 options.type = 'warning';
-                clearos_dialog_box('data_err7', '" . lang('base_warning') . "', data.errmsg, options);
+                clearos_dialog_box('data_err7', lang_warning, data.errmsg, options);
                 return;
             }
             $('#system_name_text').html(data.system_name);
@@ -395,7 +446,7 @@ function get_system_info() {
                 $('#reseller_field').hide();
             }
             $('#wizard_next_showstopper').remove();
-            $('#status_text').html('" . lang('registration_registered') . "');
+            $('#status_text').html(lang_registered);
             $('#account_text').html(data.account);
             $('#hostname_text').html(data.hostname);
             $('#hostkey_text').html(data.hostkey);
@@ -403,26 +454,25 @@ function get_system_info() {
             if (data.support != undefined) {
                 $('#support_field').show();
                 $('#support_text').html(data.support);
+                $('#serial_number_field').show();
+                $('#serial_number_text').html(data.serial_number);
                 $('#support_renewal_field').show();
-                $('#support_renewal_text').html(data.support_renewal);
                 $('#support_renewal_text').html($.datepicker.formatDate('MM d, yy', new Date(data.support_renewal)));
             } else {
                 $('#support_field').hide();
+                $('#serial_number_field').hide();
                 $('#support_renewal_field').hide();
             }
 
             $('#registration_loading_box').hide();
             $('#registration_summary').show();
-
-            // Check to see if Professional extras have been installed
-            get_extras_state();
         },
         error: function(xhr, text, err) {
             // Don't display any errors if ajax request was aborted due to page redirect/reload
             if (xhr['abort'] == undefined) {
                 var options = new Object();
                 options.type = 'warning';
-                clearos_dialog_box('data_err8', '" . lang('base_warning') . "', xhr.responseText.toString(), options);
+                clearos_dialog_box('data_err8', lang_warning, xhr.responseText.toString(), options);
             }
         }
     });
@@ -465,7 +515,7 @@ function check_system_info() {
                 //new Option(my_subscriptions[my_systems[$('#system').val()].subscription_id].description,
                 //my_systems[$('#system').val()].subscription_id)
                 $('#subscription').append(
-                    $('<option value=\"' + my_systems[$('#system').val()].subscription_id  + '\">' +
+                    $('<option value="' + my_systems[$('#system').val()].subscription_id  + '">' +
                     my_subscriptions[my_systems[$('#system').val()].subscription_id].description  + '</option>')
                 );
 
@@ -475,10 +525,10 @@ function check_system_info() {
                 return;
             }
             // Add back 'Select' default
-            $('#subscription option[value=\'0\']').remove();
+            $('#subscription option[value="0"]').remove();
             // TODO - IE8 workaround
-            //$('#subscription').append( new Option('" . lang('base_select') . "', 0));
-            $('#subscription').append($('<option value=\"0\">" . lang('base_select') . "</option>'));
+            //$('#subscription').append( new Option(lang_select, 0));
+            $('#subscription').append($('<option value="0">' + lang_select + '</option>'));
             for (id in my_subscriptions) {
                 // If no system has been selected, don't list any
                 if ($('#system').val() == 0)
@@ -486,7 +536,7 @@ function check_system_info() {
                 if (!my_subscriptions[id].assigned) {
                     // TODO - IE8 workaround
                     //$('#subscription').append( new Option(my_subscriptions[id].description, id));
-                    $('#subscription').append($('<option value=\"' + id + '\">' + my_subscriptions[id].description + '</option>'));
+                    $('#subscription').append($('<option value="' + id + '">' + my_subscriptions[id].description + '</option>'));
                 }
             }
             $('#subscription').attr('disabled', false);
@@ -503,19 +553,19 @@ function check_system_info() {
                 .end()
             ;
             // Add back 'Select' default
-            $('#subscription option[value=\'0\']').remove();
-            //$('#subscription').append( new Option('" . lang('base_select') . "', 0));
-            $('#subscription').append($('<option value=\"0\">" . lang('base_select') . "</option>'));
+            $('#subscription option[value="0"]').remove();
+            //$('#subscription').append( new Option(lang_select, 0));
+            $('#subscription').append($('<option value="0">' + lang_select + '</option>'));
             for (id in my_subscriptions) {
                 if (!my_subscriptions[id].assigned) {
                     // Only tack on serial number identifier if subscription
                     // IE8 Workaround
                     //$('#subscription').append( new Option(my_subscriptions[id].description + ' (' + my_subscriptions[id].serial_number.substr(0, 4) + '...)', id));
                     if (id > 0)
-                        $('#subscription').append($('<option value=\"' + id + '\">' + my_subscriptions[id].description +
+                        $('#subscription').append($('<option value="' + id + '">' + my_subscriptions[id].description +
                             ' (' + my_subscriptions[id].serial_number.substr(0, 4) + '...)</option>'));
                     else
-                        $('#subscription').append($('<option value=\"' + id + '\">' + my_subscriptions[id].description + '</option>'));
+                        $('#subscription').append($('<option value="' + id + '">' + my_subscriptions[id].description + '</option>'));
                 }
             }
         } else {
@@ -539,7 +589,7 @@ function check_username_availability() {
     $('.theme-validation-error').html('');
     $('#checking_username').remove();
     var options = new Object();
-    options.text = '" . lang('registration_checking_username_availability') . "';
+    options.text = lang_checking_username_availability;
     options.id = 'checking_username';
     $('#new_account_username').after(clearos_loading(options));
     $.ajax({
@@ -553,10 +603,10 @@ function check_username_availability() {
                 $('#checking_username').html('');
             } else if (data.code > 0) {
                 $('#new_account_username').show();
-                $('#checking_username').html('" . lang('registration_non_unique_username') . "');
+                $('#checking_username').html(lang_non_unique_username);
                 $('#checking_username').addClass('theme-validation-error');
             } else if (data.code < 0) {
-                clearos_dialog_box('errmsg', '" . lang('base_warning') . "', data.errmsg);
+                clearos_dialog_box('errmsg', lang_warning, data.errmsg);
             }
         },
         error: function(xhr, text, err) {
@@ -564,7 +614,7 @@ function check_username_availability() {
             if (xhr['abort'] == undefined) {
                 var options = new Object();
                 options.type = 'warning';
-                clearos_dialog_box('data_err9', '" . lang('base_warning') . "', xhr.responseText.toString(), options);
+                clearos_dialog_box('data_err9', lang_warning, xhr.responseText.toString(), options);
             }
         }
     });
@@ -581,43 +631,33 @@ function sdn_terms_of_service() {
                 $('#tos_content').html(data.text);
             } else {
                 clearos_modal_infobox_close('sdn_tos');
-                clearos_dialog_box('errmsg', '" . lang('base_warning') . "', data.errmsg);
+                clearos_dialog_box('errmsg', lang_warning, data.errmsg);
             }
         },
         error: function(xhr, text, err) {
             clearos_modal_infobox_close('sdn_tos');
             // Don't display any errors if ajax request was aborted due to page redirect/reload
-            clearos_dialog_box('errmsg', '" . lang('base_warning') . "', xhr.responseText.toString());
+            clearos_dialog_box('errmsg', lang_warning, xhr.responseText.toString());
         }
     });
 }
 
-function show_extras(payload) {
-    // Wizard: enable next button 
-    if (payload.complete) {
-        $('#registration_extras_details').html('Installation complete'); // FIXME translate
-    } else {
-        $('#registration_extras_details').html(clearos_loading('normal', payload.details));
-        $('#registration_extras').show();
-    }
-}
-
-function get_extras_state() {
+function registration_is_updating() {
     $.ajax({
-        type: 'GET',
+        url: '/app/registration/ajax/is_update_running',
+        method: 'GET',
         dataType: 'json',
-        url: '/app/registration/extras/handle_install',
-        data: '',
-        success: function(json) {
-            show_extras(json);
-            window.setTimeout(get_extras_state, 3000);
+        success : function(json) {
+            if (json.state != 1) {
+                window.location = '/app/registration';
+                return;
+            }
+            window.setTimeout(registration_is_updating, 1000);
         },
         error: function(xhr, text, err) {
-            window.setTimeout(get_extras_state, 3000);
+            window.location = '/app/registration/abort_update';
+            return;
         }
     });
 }
-
-";
-
 // vim: syntax=javascript ts=4

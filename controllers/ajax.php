@@ -241,4 +241,29 @@ class Ajax extends ClearOS_Controller
             echo json_encode(Array('code' => clearos_exception_code($e), 'errmsg' => clearos_exception_message($e)));
         }
     }
+
+    /**
+     * Ajax is update running check
+     *
+     * @return JSON
+     */
+
+    function is_update_running()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        header('Cache-Control: no-cache, must-revalidate');
+        header('Content-type: application/json');
+
+        try {
+            $this->load->library('base/Script', 'update-registration-library');
+            if ($this->script->is_running()) {
+                echo json_encode(array('state' => 1));
+                return;
+            }
+            echo json_encode(array('state' => 0));
+        } catch (Exception $e) {
+            echo json_encode(array('state' => 0));
+        }
+    }
 }

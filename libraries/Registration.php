@@ -100,8 +100,10 @@ class Registration extends Rest
     const FILE_SDN_NOTICE = '/var/clearos/registration/sdn_notification';
     const FILE_AUDIT = 'audit.json';
     const FOLDER_REGISTRATION = '/var/clearos/registration';
+    const SCRIPT_UPGRADE = 'update-registration-library';
     const COMMAND_CAT = '/bin/cat';
-    const COMMAND_INSTALL_EXTRAS = '/usr/clearos/apps/registration/deploy/install-extras';
+    const COMMAND_UPDATE_REGISTRATION = '/usr/clearos/apps/registration/deploy/update-registration-library';
+    const COMMAND_KILLALL = '/usr/bin/killall';
     const REGISTER_NEW = 0;
     const REGISTER_EXISTING = 1;
     const CODE_SYSTEM_REGISTERED = 0;
@@ -158,7 +160,6 @@ class Registration extends Rest
                 $suva = new Suva();
                 $suva->set_device_name($response->device_id);
                 $this->set_local_registration_status(TRUE);
-                $this->_install_extras();
                 $this->delete_cache();
             }
             return $result;
@@ -608,28 +609,27 @@ class Registration extends Rest
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
-    // P R I V A T E   M E T H O D S
-    ///////////////////////////////////////////////////////////////////////////////
-
     /**
-     * Intall extra packages.
-     *
-     * After a system is registered, new repos for paid apps are available.
-     * This makes it possible to install additional features.
+     * Abort update script.
      *
      * @return void
      */
 
-    protected function _install_extras()
+    public function abort_update_script()
     {
         clearos_profile(__METHOD__, __LINE__);
 
-        $options['background'] = TRUE;
-
-        $shell = new Shell();
-        $shell->execute(self::COMMAND_INSTALL_EXTRAS, '', TRUE, $options);
+        try {
+            $shell = new Shell();
+            $shell->execute(self::COMMAND_KILLALL, self::SCRIPT_UPGRADE, TRUE);
+        } catch (\Exception $e) {
+            // Don't do anything
+        }
     }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // P R I V A T E   M E T H O D S
+    ///////////////////////////////////////////////////////////////////////////////
 
     /**
      * Loads configuration files.

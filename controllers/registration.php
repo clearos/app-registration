@@ -45,9 +45,15 @@ class Registration extends ClearOS_Controller
         clearos_profile(__METHOD__, __LINE__);
 
         $this->load->library('registration/Registration');
+        $this->load->library('base/Script', 'update-registration-library');
         $this->lang->load('registration');
         $data = array();
 
+        if ($this->script->is_running()) {
+            // If registration library is running still, just put on hold
+            redirect('/registration/updating');
+            return;
+        }
         $this->page->view_form('registration/summary', $data, lang('registration_registration'));
     }
 
@@ -101,7 +107,8 @@ class Registration extends ClearOS_Controller
                         $this->input->post('system_name'),
                         $this->input->post('system'),
                         $this->input->post('subscription'),
-                        $this->input->post('environment')
+                        $this->input->post('environment'),
+                        $this->input->post('unit')
                     )
                 );
                 if ($response->code == 0) {
@@ -147,5 +154,37 @@ class Registration extends ClearOS_Controller
         $this->registration->reset();
         $this->page->set_message(lang('registration_reset'), 'info');
         redirect('/registration/register');
+    }
+
+    /**
+     * Registration updating controller
+     *
+     * @return view
+     */
+
+    function updating()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        clearos_load_language('registration');
+
+        $this->page->view_form('registration/updating_library', $data, lang('registration_updating'));
+    }
+
+    /**
+     * Abort software update
+     *
+     * @return view
+     */
+
+    function abort_update()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        clearos_load_language('registration');
+
+        $this->load->library('registration/Registration');
+        $this->registration->abort_update_script();
+        redirect('/registration');
     }
 }

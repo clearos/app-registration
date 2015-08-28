@@ -59,6 +59,7 @@ echo field_input('hostname', '', lang('registration_hostname_ip'), TRUE);
 echo field_input('hostkey', '', lang('registration_hostkey'), TRUE);
 echo field_input('end_of_life', '', lang('registration_end_of_life'), TRUE);
 echo field_input('support', '', lang('registration_support'), TRUE);
+echo field_input('serial_number', '', lang('registration_serial_number'), TRUE);
 echo field_input('support_renewal', '', lang('registration_support_renewal'), TRUE);
 
 echo form_footer();
@@ -66,18 +67,4 @@ echo form_close();
 
 echo "</div>";
 
-///////////////////////////////////////////////////////////////////////////////
-// Extras box
-///////////////////////////////////////////////////////////////////////////////
-
-echo "<div id='registration_extras' style='display: none'>";
-
-// FIXME: translate
-echo infobox_highlight(
-    'Updating Professional',
-    'Thank you!  Your system is now registered and included apps are installing:<br><br>' .
-    "<span id='registration_extras_details'><span class='theme-loading-small'>" . 'This may take a minute or so...' . "</span></span>"
-);
-
-echo "</div>";
 echo modal_info("wizard_next_showstopper", lang('base_error'), lang('registration_loading_registration_information'), array('type' => 'warning'));

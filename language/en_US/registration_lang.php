@@ -1,5 +1,6 @@
 <?php
 
+$lang['registration_abort_update'] = 'Abort Update';
 $lang['registration_account'] = 'Account';
 $lang['registration_account_created'] = 'Account successfully created.';
 $lang['registration_account_username'] = 'Account Username';
@@ -9,6 +10,7 @@ $lang['registration_app_tooltip'] = 'A single account can be used to register an
 $lang['registration_betas'] = 'Beta Programs';
 $lang['registration_business'] = 'Business - 10 or more employees';
 $lang['registration_checking_username_availability'] = 'Checking availability';
+$lang['registration_cost'] = 'Cost';
 $lang['registration_create_account'] = 'Create Account';
 $lang['registration_creating_an_account'] = 'Creating an Account';
 $lang['registration_creating_an_account_help'] = 'If you do not have a ClearCenter account, you can create one in just one step!';
@@ -26,7 +28,9 @@ $lang['registration_gov'] = 'Government Organization';
 $lang['registration_home'] = 'Home';
 $lang['registration_hostkey'] = 'Hostkey';
 $lang['registration_hostname_ip'] = 'External Hostname/IP';
+$lang['registration_learn_more'] = 'Learn More';
 $lang['registration_loading_registration_information'] = 'Loading registration information.';
+$lang['registration_loading_updating_software'] = 'Sorry for the delay!  The registration app is checking and applying necessary updates...shouldn\'t take more than a minute.';
 $lang['registration_mailer'] = 'Subscribe to Mailing List';
 $lang['registration_my_server'] = 'My Server';
 $lang['registration_new'] = 'New Install';
@@ -65,3 +69,4 @@ $lang['registration_terms_of_service'] = 'Terms of Service';
 $lang['registration_terms_of_service_blurb'] = 'By clicking %s, you agree to the %s.';
 $lang['registration_type'] = 'Type';
 $lang['registration_type_is_invalid'] = 'Invalid registration request.';
+$lang['registration_updating'] = 'Software Update in Progress';
