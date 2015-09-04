@@ -44,6 +44,7 @@ use \clearos\apps\base\File as File;
 use \clearos\apps\base\Folder as Folder;
 use \clearos\apps\base\Product as Product;
 use \clearos\apps\base\Shell as Shell;
+use \clearos\apps\base\Yum as Yum;
 use \clearos\apps\clearcenter\Rest as Rest;
 use \clearos\apps\mode\Mode_Engine as Mode_Engine;
 use \clearos\apps\mode\Mode_Factory as Mode_Factory;
@@ -57,6 +58,7 @@ clearos_load_library('base/File');
 clearos_load_library('base/Folder');
 clearos_load_library('base/Product');
 clearos_load_library('base/Shell');
+clearos_load_library('base/Yum');
 clearos_load_library('clearcenter/Rest');
 clearos_load_library('mode/Mode_Engine');
 clearos_load_library('mode/Mode_Factory');
@@ -158,6 +160,8 @@ class Registration extends Rest
                 $suva->set_device_name($response->device_id);
                 $this->set_local_registration_status(TRUE);
                 $this->delete_cache();
+                $yum = new Yum();
+                $yum->set_enabled('clearos-updates', FALSE);
             }
             return $result;
         } catch (Exception $e) {
@@ -603,6 +607,28 @@ class Registration extends Rest
             return $result;
         } catch (Exception $e) {
             throw new Webservice_Exception(clearos_exception_message($e), CLEAROS_ERROR);
+        }
+    }
+
+    /**
+     * Get local registration flag.
+     *
+     * @return boolean true if registered
+     *
+     */
+
+    public function get_local_registration_status()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        try {
+
+            $file = new File(self::FILE_REGISTERED_FLAG);
+            if ($file->exists())
+                return TRUE;
+            return FALSE;
+        } catch (Exception $e) {
+            return FALSE;
         }
     }
 
