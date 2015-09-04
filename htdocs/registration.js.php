@@ -162,10 +162,8 @@ $(document).ready(function() {
         get_registration_info();
     });
 
-    if ($(location).attr('href').match('.*registration\/updating.*') != null) {
-        console.log('ben');
-        registration_is_updating();
-    }
+    if ($(location).attr('href').match('.*registration\/updating.*') != null)
+        wizard_update_is_updating();
 });
 
 /**
@@ -640,9 +638,9 @@ function sdn_terms_of_service() {
     });
 }
 
-function registration_is_updating() {
+function wizard_update_is_updating() {
     $.ajax({
-        url: '/app/registration/ajax/is_update_running',
+        url: '/app/base/wizard/is_wizard_upgrade_running',
         method: 'GET',
         dataType: 'json',
         success : function(json) {
@@ -650,7 +648,7 @@ function registration_is_updating() {
                 window.location = '/app/registration';
                 return;
             }
-            window.setTimeout(registration_is_updating, 1000);
+            window.setTimeout(wizard_update_is_updating, 1000);
         },
         error: function(xhr, text, err) {
             window.location = '/app/registration/abort_update';

@@ -30,7 +30,6 @@ $lang['registration_hostkey'] = 'Hostkey';
 $lang['registration_hostname_ip'] = 'External Hostname/IP';
 $lang['registration_learn_more'] = 'Learn More';
 $lang['registration_loading_registration_information'] = 'Loading registration information.';
-$lang['registration_loading_updating_software'] = 'Sorry for the delay!  The registration app is checking and applying necessary updates...shouldn\'t take more than a minute.';
 $lang['registration_mailer'] = 'Subscribe to Mailing List';
 $lang['registration_my_server'] = 'My Server';
 $lang['registration_new'] = 'New Install';

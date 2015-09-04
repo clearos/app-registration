@@ -80,8 +80,7 @@ $yum = new Yum();
 
 try {
 
-    // Try 2 times, 10 seconds apart
-    if ($script->lock(10, 2) !== TRUE) {
+    if ($script->lock() !== TRUE) {
         echo "Registration library upate in progress...";
         exit(0);
     }

@@ -28,7 +28,7 @@ $options['buttons']  = array(
 );
 echo infobox_info(
     lang('registration_updating'),
-    loading('normal', lang('registration_loading_updating_software')),
+    loading('normal', lang('base_loading_software_update')),
     $options
 );
 

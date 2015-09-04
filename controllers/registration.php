@@ -7,7 +7,7 @@
  * @package    registration
  * @subpackage controllers
  * @author     ClearCenter <developer@clearcenter.com>
- * @copyright  2011 ClearCenter
+ * @copyright  2011-2015 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
  * @link       http://www.clearcenter.com/support/documentation/clearos/registration/
  */
@@ -15,6 +15,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
+
+use \clearos\apps\base\Install_Wizard as Install_Wizard;
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -27,7 +29,7 @@
  * @package    registration
  * @subpackage controllers
  * @author     ClearCenter <developer@clearcenter.com>
- * @copyright  2011 ClearCenter
+ * @copyright  2011-2015 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
  * @link       http://www.clearcenter.com/support/documentation/clearos/registration/
  */
@@ -45,12 +47,13 @@ class Registration extends ClearOS_Controller
         clearos_profile(__METHOD__, __LINE__);
 
         $this->load->library('registration/Registration');
-        $this->load->library('base/Script', 'update-registration-library');
+        $this->load->library('base/Install_Wizard');
+        $this->load->library('base/Script', Install_Wizard::SCRIPT_UPGRADE);
         $this->lang->load('registration');
         $data = array();
 
         if ($this->script->is_running()) {
-            // If registration library is running still, just put on hold
+            // If wizard update is running still, just put on hold
             redirect('/registration/updating');
             return;
         }
@@ -181,10 +184,8 @@ class Registration extends ClearOS_Controller
     {
         clearos_profile(__METHOD__, __LINE__);
 
-        clearos_load_language('registration');
-
-        $this->load->library('registration/Registration');
-        $this->registration->abort_update_script();
+        $this->load->library('base/Install_Wizard');
+        $this->install_wizard->abort_update_script();
         redirect('/registration');
     }
 }
