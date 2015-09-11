@@ -46,6 +46,7 @@ use \clearos\apps\base\Product as Product;
 use \clearos\apps\base\Shell as Shell;
 use \clearos\apps\base\Yum as Yum;
 use \clearos\apps\clearcenter\Rest as Rest;
+use \clearos\apps\events\Event_Utils as Event_Utils;
 use \clearos\apps\mode\Mode_Engine as Mode_Engine;
 use \clearos\apps\mode\Mode_Factory as Mode_Factory;
 use \clearos\apps\network\Network as Network;
@@ -60,6 +61,7 @@ clearos_load_library('base/Product');
 clearos_load_library('base/Shell');
 clearos_load_library('base/Yum');
 clearos_load_library('clearcenter/Rest');
+clearos_load_library('events/Event_Utils');
 clearos_load_library('mode/Mode_Engine');
 clearos_load_library('mode/Mode_Factory');
 clearos_load_library('network/Network');
@@ -578,8 +580,18 @@ class Registration extends Rest
                 // Not really worried about
             }
             
-            $result = $this->request('registration', 'check_in', $extras);
-            return json_decode($result, TRUE);
+            $response = json_decode($this->request('registration', 'check_in', $extras), TRUE);
+
+            // Only set local registration flag if code is specific
+            if ($response['code'] == self::CODE_SYSTEM_NOT_REGISTERED) {
+                $this->set_local_registration_status(FALSE);
+                Event_Utils::add_event(lang('registration_system_unregistered'), 'CRIT', 'REGISTRATION_UNREGISTERED', 'registration', TRUE);
+            } elseif ($response['code'] == self::CODE_SYSTEM_REGISTERED) {
+                $this->set_local_registration_status(TRUE);
+                Event_Utils::resolve_event('REGISTRATION_UNREGISTERED');
+            }
+
+            return $response;
         } catch (\Exception $e) {
             throw new Engine_Exception(clearos_exception_message($e), CLEAROS_ERROR);
         }

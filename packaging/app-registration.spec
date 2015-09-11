@@ -1,7 +1,7 @@
 
 Name: app-registration
 Epoch: 1
-Version: 2.1.13
+Version: 2.1.14
 Release: 1%{dist}
 Summary: System Registration
 License: Proprietary
@@ -21,6 +21,7 @@ Group: ClearOS/Libraries
 Requires: app-base-core
 Requires: app-clearcenter-core => 1:1.4.8
 Requires: app-base-core => 1:2.1.15
+Requires: csplugin-events
 
 %description core
 System registration provides access to the Marketplace - a place where you will find the latest apps.  Creating an account and registering your system is quick and easy.
@@ -51,6 +52,10 @@ if [ $1 -eq 1 ]; then
 fi
 
 [ -x /usr/clearos/apps/registration/deploy/upgrade ] && /usr/clearos/apps/registration/deploy/upgrade
+if [ -x /usr/bin/eventsctl -a -S /var/lib/csplugin-events/eventsctl.socket ]; then
+    /usr/bin/eventsctl -R --type REGISTRATION_UNREGISTERED --basename registration
+
+fi
 
 exit 0
 
@@ -63,6 +68,10 @@ fi
 if [ $1 -eq 0 ]; then
     logger -p local6.notice -t installer 'app-registration-core - uninstalling'
     [ -x /usr/clearos/apps/registration/deploy/uninstall ] && /usr/clearos/apps/registration/deploy/uninstall
+fi
+if [ -x /usr/bin/eventsctl -a -S /var/lib/csplugin-events/eventsctl.socket ]; then
+    /usr/bin/eventsctl -D --type REGISTRATION_UNREGISTERED
+
 fi
 
 exit 0

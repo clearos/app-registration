@@ -55,6 +55,7 @@ $lang['registration_select_subscription_required'] = 'Subscription required to r
 $lang['registration_select_system_required'] = 'Select system to upgrade/reinstall.';
 $lang['registration_serial_number'] = 'Serial No.';
 $lang['registration_smb'] = 'Business (less than 10 employees)';
+$lang['registration_system_unregistered'] = 'System not registered';
 $lang['registration_smb_multi'] = 'Multi-Premise Business';
 $lang['registration_soho'] = 'Home Office';
 $lang['registration_subscription_details'] = 'Subscription Details';

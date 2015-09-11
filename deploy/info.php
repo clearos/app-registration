@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'registration';
-$app['version'] = '2.1.13';
+$app['version'] = '2.1.14';
 $app['release'] = '1';
 $app['vendor'] = 'ClearCenter';
 $app['packager'] = 'ClearCenter';
@@ -66,3 +66,12 @@ $app['core_file_manifest'] = array(
 $app['core_directory_manifest'] = array(
     '/var/clearos/registration' => array('mode' => '755', 'owner' => 'root', 'group' => 'root')
 );
+
+/////////////////////////////////////////////////////////////////////////////
+// App Events
+/////////////////////////////////////////////////////////////////////////////
+
+$app['event_types'] = array(
+    'REGISTRATION_UNREGISTERED',
+);
+
