@@ -162,8 +162,12 @@ class Registration extends Rest
                 $suva->set_device_name($response->device_id);
                 $this->set_local_registration_status(TRUE);
                 $this->delete_cache();
-                $yum = new Yum();
-                $yum->set_enabled('clearos-updates', FALSE);
+                // SDN knows about registration type and create dates to determine if we should
+                // disable the non-verified repositories
+                if ($response->disable_community_repos) {
+                    $yum = new Yum();
+                    $yum->set_enabled('clearos-updates', FALSE);
+                }
             }
             return $result;
         } catch (Exception $e) {
