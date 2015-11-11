@@ -323,6 +323,7 @@ function get_registration_info() {
         url: '/app/registration/ajax/get_registration_info',
         data: 'ci_csrf_token=' + $.cookie('ci_csrf_token') + '&username=' + $('#sdn_form_username').val() + '&password=' + $('#sdn_form_password').val(),
         success: function(data) {
+            console.log(data);
             if (data.code > 0) {
                 $('#loading-systems').html(data.errmsg);
                 $('#loading-subscriptions').html(data.errmsg);
@@ -510,6 +511,9 @@ function check_system_info() {
                 // TODO - IE8 workaround
                 //new Option(my_subscriptions[my_systems[$('#system').val()].subscription_id].description,
                 //my_systems[$('#system').val()].subscription_id)
+                console.log('MySystems');
+                console.log(my_subscriptions);
+                console.log(my_systems[$('#system').val()].subscription_id);
                 $('#subscription').append(
                     $('<option value="' + my_systems[$('#system').val()].subscription_id  + '">' +
                     my_subscriptions[my_systems[$('#system').val()].subscription_id].description  + '</option>')

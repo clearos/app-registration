@@ -1,7 +1,7 @@
 
 Name: app-registration
 Epoch: 1
-Version: 2.1.15
+Version: 2.1.16
 Release: 1%{dist}
 Summary: System Registration
 License: Proprietary
@@ -20,7 +20,7 @@ License: LGPLv3
 Group: ClearOS/Libraries
 Requires: app-base-core
 Requires: app-clearcenter-core => 1:1.4.8
-Requires: app-base-core => 1:2.1.15
+Requires: app-base-core => 1:2.1.27
 Requires: csplugin-events
 
 %description core

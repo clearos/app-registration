@@ -101,6 +101,7 @@ class Registration extends Rest
 
     const FILE_CONFIG = '/etc/clearos/registration.conf';
     const FILE_REGISTERED_FLAG = '/var/clearos/registration/registered';
+    const FILE_VERIFIED_REPO_FLAG = '/var/clearos/registration/verified';
     const FILE_SDN_NOTICE = '/var/clearos/registration/sdn_notification';
     const FILE_AUDIT = 'audit.json';
     const FOLDER_REGISTRATION = '/var/clearos/registration';
@@ -109,6 +110,7 @@ class Registration extends Rest
     const REGISTER_EXISTING = 1;
     const CODE_SYSTEM_REGISTERED = 0;
     const CODE_SYSTEM_NOT_REGISTERED = 3;
+    const NON_VERIFIED_COMMUNITY_REPOS = 'clearos-centos clearos-centos-updates clearos-epel clearos-updates';
 
     ///////////////////////////////////////////////////////////////////////////////
     // V A R I A B L E S
@@ -166,7 +168,7 @@ class Registration extends Rest
                 // disable the non-verified repositories
                 if ($response->disable_community_repos) {
                     $yum = new Yum();
-                    $yum->set_enabled('clearos-updates', FALSE);
+                    $yum->set_enabled(explode(' ', self::NON_VERIFIED_COMMUNITY_REPOS), FALSE);
                 }
             }
             return $result;
@@ -488,6 +490,13 @@ class Registration extends Rest
         $this->delete_cache();
 
         $this->set_local_registration_status(FALSE);
+
+        // Since registration is being forcibly reset, we need to make sure the
+        // Marketplace yum plugin will take care of the verified vs. non-verified repo access.
+        // Make ure the flag is reset
+        $file = new File(self::FILE_VERIFIED_REPO_FLAG, TRUE);
+        if ($file->exists())
+            $file->delete();
     }
 
     /**
