@@ -253,6 +253,11 @@ function get_sdn_info() {
         url: '/app/registration/ajax/get_sdn_info',
         data: 'ci_csrf_token=' + $.cookie('ci_csrf_token'),
         success: function(data) {
+            if (data.code != 0) {
+                $('#registration_loading_box').hide();
+                $('#registration_loading_box').after(clearos_infobox_critical(lang_error, data.errmsg));
+                return;
+            }
             // Check to see if it's registered already
             if (data.device_id != undefined && data.device_id < 0) {
                 if ($(location).attr('href').match('.*registration($|\#|\/$)') != null) {
@@ -278,7 +283,7 @@ function get_sdn_info() {
                     $('#subscription_field').hide();
                     $('#validate_subscription').remove();
                 }
-	    } else if ($(location).attr('href').match('.*registration($|\#|\/$)') != null) {
+            } else if ($(location).attr('href').match('.*registration($|\#|\/$)') != null) {
                 get_system_info();
             }
         },

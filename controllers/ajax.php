@@ -16,8 +16,6 @@
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
-use \clearos\apps\network\Network_Status as Network_Status;
-
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
 ///////////////////////////////////////////////////////////////////////////////
@@ -134,6 +132,7 @@ class Ajax extends ClearOS_Controller
             $this->load->library('registration/Registration');
             $result = $this->registration->get_sdn_info(TRUE);
             $response = json_decode($result);
+
             // Better sync up local registation status
             if ($response->code == 0 && $response->device_id > 0)
                 $this->registration->set_local_registration_status(TRUE);
@@ -159,21 +158,8 @@ class Ajax extends ClearOS_Controller
         header('Content-type: application/json');
 
         try {
-            sleep(2);
-            $this->load->library('network/Network_Status');
-            $status = $this->network_status->get_connection_status();
-
-            if ($status == Network_Status::STATUS_OFFLINE) {
-                $data['network_code'] = 2;
-                echo json_encode($data);
-            } else if ($status == Network_Status::STATUS_ONLINE_NO_DNS) {
-                $data['network_code'] = 1;
-                echo json_encode($data);
-            } else {
-                $data['network_code'] = 0;
-                $this->load->library('registration/Registration');
-                echo $this->registration->get_system_info();
-            }
+            $this->load->library('registration/Registration');
+            echo $this->registration->get_system_info();
         } catch (Exception $e) {
             echo json_encode(Array('code' => clearos_exception_code($e), 'errmsg' => clearos_exception_message($e)));
         }
