@@ -6,7 +6,7 @@
 
 $app['basename'] = 'registration';
 $app['version'] = '2.1.18';
-$app['release'] = '1';
+$app['release'] = '2';
 $app['vendor'] = 'ClearCenter';
 $app['packager'] = 'ClearCenter';
 $app['license'] = 'Proprietary';

@@ -2,7 +2,7 @@
 Name: app-registration
 Epoch: 1
 Version: 2.1.18
-Release: 1%{dist}
+Release: 2%{dist}
 Summary: System Registration
 License: Proprietary
 Group: ClearOS/Apps
@@ -52,9 +52,11 @@ if [ $1 -eq 1 ]; then
 fi
 
 [ -x /usr/clearos/apps/registration/deploy/upgrade ] && /usr/clearos/apps/registration/deploy/upgrade
+
 if [ -x /usr/bin/eventsctl -a -S /var/lib/csplugin-events/eventsctl.socket ]; then
     /usr/bin/eventsctl -R --type REGISTRATION_UNREGISTERED --basename registration
-
+else
+    logger -p local6.notice -t installer 'app-registration - events system not running, unable to register custom type.'
 fi
 
 exit 0
@@ -69,9 +71,11 @@ if [ $1 -eq 0 ]; then
     logger -p local6.notice -t installer 'app-registration-core - uninstalling'
     [ -x /usr/clearos/apps/registration/deploy/uninstall ] && /usr/clearos/apps/registration/deploy/uninstall
 fi
+
 if [ -x /usr/bin/eventsctl -a -S /var/lib/csplugin-events/eventsctl.socket ]; then
     /usr/bin/eventsctl -D --type REGISTRATION_UNREGISTERED
-
+else
+    logger -p local6.notice -t installer 'app-registration - events system not running, unable to unregister custom type.'
 fi
 
 exit 0
