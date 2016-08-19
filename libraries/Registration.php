@@ -153,7 +153,7 @@ class Registration extends Rest
         try {
 
             $extras = array (
-                'username' => $username, 'password' => $password, 'registration_type' => $registration_type,
+                'username' => $username, 'password' => $password, 'registration_type' => $registration_type, 'sync_hostkey' => TRUE,
                 'system_name' => $system_name, 'system' => $system, 'subscription' => $subscription, 'environment' => $environment
             );
 
@@ -162,6 +162,8 @@ class Registration extends Rest
             if ($response->code == 0) {
                 $suva = new Suva();
                 $suva->set_device_name($response->device_id);
+                if ($registration_type == self::REGISTER_EXISTING)
+                    $suva->set_hostkey($response->hostkey);
                 $this->set_local_registration_status(TRUE);
                 $this->delete_cache();
                 // SDN knows about registration type and create dates to determine if we should

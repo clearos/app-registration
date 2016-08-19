@@ -38,10 +38,13 @@ var lang_warning = '<?php echo lang('base_warning'); ?>';
 var lang_select = '<?php echo lang('base_select'); ?>';
 var lang_checking_username_availability = '<?php echo lang('registration_checking_username_availability'); ?>';
 var lang_subscription_details = '<?php echo lang('registration_subscription_details'); ?>';
+var lang_existing = '<?php echo lang('registration_existing'); ?>';
 var lang_description = '<?php echo lang('base_description'); ?>';
 var lang_serial_number = '<?php echo lang('registration_serial_number'); ?>';
 var lang_details = '<?php echo lang('base_details'); ?>';
 var lang_cost = '<?php echo lang('registration_cost'); ?>';
+var lang_edition = '<?php echo lang('registration_edition'); ?>';
+var lang_version = '<?php echo lang('registration_version'); ?>';
 var lang_type = '<?php echo lang('registration_type'); ?>';
 var lang_expiry = '<?php echo lang('registration_expiry'); ?>';
 var lang_evaluation = '<?php echo lang('registration_evaluation'); ?>';
@@ -52,6 +55,8 @@ var lang_go = '<?php echo lang('base_go'); ?>';
 var lang_account = '<?php echo lang('registration_account'); ?>';
 var lang_register_system = '<?php echo lang('registration_register_system'); ?>';
 var lang_registered = '<?php echo lang('registration_registered'); ?>';
+var lang_system_name = '<?php echo lang('registration_system_name'); ?>';
+var lang_subscription = '<?php echo lang('registration_subscription_list'); ?>';
 var lang_non_unique_username = '<?php echo lang('registration_non_unique_username'); ?>';
 var lang_get_system_list = '<?php echo lang('registration_get_system_list'); ?>';
 var lang_get_subscription_list = '<?php echo lang('registration_get_subscription_list'); ?>';
@@ -103,6 +108,7 @@ $(document).ready(function() {
             $('#validate_system_name').remove();
             $('#system').after('<input type="hidden" id="validate_system" name="validate_system" value="1">');
         } else {
+            $('#registration-subscription-details').remove()
             $('#system_field').hide();
             $('#system_name').after('<input type="hidden" id="validate_system_name" name="validate_system_name" value="1">');
             $('#validate_system').remove();
@@ -385,11 +391,15 @@ function get_registration_info() {
             for (index = 0; index < data.systems.length; index++) {
                 my_systems[data.systems[index].id] = {
                     subscription_id: data.systems[index].subscription_id,
-                    name: data.systems[index].name, supported: data.systems[index].supported
+                    name: data.systems[index].name, supported: data.systems[index].supported,
+                    registered_on: data.systems[index].registered_on,
+                    major: data.systems[index].major,
+                    version: data.systems[index].version,
+                    edition: data.systems[index].edition,
                 };
                 // TODO - IE8 workaround
                 //$('#system').append( new Option(data.systems[index].name, data.systems[index].id));
-                $('<option value=\"' + data.systems[index].id + '\">' + data.systems[index].name + '</option>').appendTo($('#system'));
+                $('<option value=\"' + data.systems[index].id + '\" data-registered-on=\"' + data.systems[index].registered_on + '\">' + data.systems[index].name + '</option>').appendTo($('#system'));
             }
             reg_info_ok = true;
             check_system_info();
@@ -490,15 +500,25 @@ function check_system_info() {
         $('#system_name').attr('disabled', false);
     }
 
+    var system_details = '';
     // If an upgrade/re-install, disable system name...it is inherited from previously registered system reg
     if ($('#registration_type').val() > 0) {
         $('#system').attr('disabled', false);
         // Disable name field...it be inherited
         $('#system_name').attr('disabled', true);
-        if ($('#system').val() == 0)
+        if ($('#system').val() == 0) {
             $('#system_name').val('');
-        else
+        } else {
             $('#system_name').val(my_systems[$('#system').val()].name);
+
+            system_details = '<div id="registration-subscription-details">' +
+                '<h3>' + lang_existing + '</h3>' +
+                clearos_key_value_pair(lang_system_name, my_systems[$('#system').val()].name) +
+                clearos_key_value_pair(lang_edition, my_systems[$('#system').val()].edition) +
+                clearos_key_value_pair(lang_version, my_systems[$('#system').val()].version) +
+                clearos_key_value_pair(lang_registered, $.datepicker.formatDate('MM d, yy', new Date(my_systems[$('#system').val()].registered_on))) +
+                '</div>';
+        }
 
         // If subscription req'd...list only ones that are unassigned if system upgrade does not already have a license
         if ($('#subscription_field').is(':visible')) {
@@ -522,9 +542,26 @@ function check_system_info() {
 
                 // Update display
                 display_subscription_info();
+                system_details = '<div id="registration-subscription-details">' +
+                    '<h3>' + lang_existing + '</h3>' +
+                    clearos_key_value_pair(lang_system_name, my_systems[$('#system').val()].name) +
+                    clearos_key_value_pair(lang_edition, my_systems[$('#system').val()].edition) +
+                    clearos_key_value_pair(lang_version, my_systems[$('#system').val()].version) +
+                    clearos_key_value_pair(lang_registered, $.datepicker.formatDate('MM d, yy', new Date(my_systems[$('#system').val()].registered_on))) +
+                    clearos_key_value_pair(lang_subscription, my_subscriptions[my_systems[$('#system').val()].subscription_id].description) +
+                    clearos_key_value_pair(lang_serial_number, my_subscriptions[my_systems[$('#system').val()].subscription_id].serial_number) +
+                    clearos_key_value_pair(lang_expiry, $.datepicker.formatDate('MM d, yy', new Date(my_subscriptions[my_systems[$('#system').val()].subscription_id].expire))) +
+                    '</div>';
+                if ($('#inline-help-hook').length != 0)
+                   $('#inline-help-hook').html(system_details);
+                else
+                    $('#theme-sidebar-container div.box-footer').html(system_details);
+
+                $('#subscription').attr('disabled', true);
                 // Exit function
                 return;
             }
+
             // Add back 'Select' default
             $('#subscription option[value="0"]').remove();
             // TODO - IE8 workaround
@@ -544,6 +581,16 @@ function check_system_info() {
         } else {
             $('#subscription').attr('disabled', true);
         }
+
+        if (system_details.length) {
+            if ($('#inline-help-hook').length != 0)
+               $('#inline-help-hook').html(system_details);
+            else
+                $('#theme-sidebar-container div.box-footer').html(system_details);
+        } else {
+            $('#registration-subscription-details').remove();
+        }
+
     } else {
         $('#system_name').val(reg_default_name);
         // If subscription req'd...list only ones that are unassigned

@@ -35,6 +35,8 @@ $lang['registration_my_server'] = 'My Server';
 $lang['registration_new'] = 'New Install';
 $lang['registration_new_apps'] = 'New Marketplace Apps';
 $lang['registration_new_release'] = 'New Version Releases';
+$lang['registration_version'] = 'Version';
+$lang['registration_edition'] = 'Edition';
 $lang['registration_nfp'] = 'Non-Profit';
 $lang['registration_non_unique_username'] = 'Account username already in use - please select a new username.';
 $lang['registration_offline'] = 'System registration/status is not available at this time since your system is not connected to the Internet. Please check your <a href="/app/network/iface">network settings</a> to make sure you have at least one external interface configured.';
