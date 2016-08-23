@@ -106,6 +106,7 @@ class Registration extends Rest
     const FILE_AUDIT = 'audit.json';
     const FOLDER_REGISTRATION = '/var/clearos/registration';
     const COMMAND_CAT = '/bin/cat';
+    const COMMAND_DMIDECODE = '/usr/sbin/dmidecode';
     const REGISTER_NEW = 0;
     const REGISTER_EXISTING = 1;
     const CODE_SYSTEM_REGISTERED = 0;
@@ -154,7 +155,8 @@ class Registration extends Rest
 
             $extras = array (
                 'username' => $username, 'password' => $password, 'registration_type' => $registration_type, 'sync_hostkey' => TRUE,
-                'system_name' => $system_name, 'system' => $system, 'subscription' => $subscription, 'environment' => $environment
+                'system_name' => $system_name, 'system' => $system, 'subscription' => $subscription, 'environment' => $environment,
+                'hardware_id' => $this->_get_hardware_id()
             );
 
             $result = $this->request('registration', 'register', $extras);
@@ -571,6 +573,10 @@ class Registration extends Rest
             if (preg_match('/([0-9.]+)\s+([0-9.])/', $line, $match))
                 $extras['uptime'] = $match[1];
 
+            // Hardware ID/Hash
+            //-----------------
+            $extras['hardware_id'] = $this->_get_hardware_id();
+
             // Locale and Version Info always get sent up in Rest calls
 
             // Opt-Out data
@@ -714,6 +720,29 @@ class Registration extends Rest
         }
 
         $this->is_loaded = FALSE;
+    }
+
+    /**
+     * Generate a hardware specific ID.
+     *
+     *
+     * @return String
+     * @throws Engine_Exception
+     */
+
+    function _get_hardware_id()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+        $hardware_id = "NA";
+
+        $shell = new Shell();
+        try {
+            $shell->execute(self::COMMAND_DMIDECODE, "| grep 'ID:' | uniq | sed -e 's/.*ID://;s/ //g;s/-//g' | xargs echo -n | md5sum | awk '{ print $1 }'", TRUE);
+            $hardware_id = $shell->get_last_output_line();
+        } catch (\Exception $e) {
+            // Do nothing
+        }
+        return $hardware_id;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

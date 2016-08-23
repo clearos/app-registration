@@ -5,7 +5,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 $app['basename'] = 'registration';
-$app['version'] = '2.2.0';
+$app['version'] = '2.2.1';
 $app['release'] = '1';
 $app['vendor'] = 'ClearCenter';
 $app['packager'] = 'ClearCenter';
@@ -36,7 +36,8 @@ $app['controllers']['registration']['inline_help'] = array(
 
 $app['core_requires'] = array(
     'app-clearcenter-core => 1:1.4.8',
-    'app-base-core => 1:2.1.27'
+    'app-base-core => 1:2.1.27',
+    'dmidecode'
 );
 
 $app['core_file_manifest'] = array(

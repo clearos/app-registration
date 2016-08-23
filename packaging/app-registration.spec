@@ -1,8 +1,8 @@
 
 Name: app-registration
 Epoch: 1
-Version: 2.1.18
-Release: 2%{dist}
+Version: 2.2.1
+Release: 1%{dist}
 Summary: System Registration
 License: Proprietary
 Group: ClearOS/Apps
@@ -21,6 +21,7 @@ Group: ClearOS/Libraries
 Requires: app-base-core
 Requires: app-clearcenter-core => 1:1.4.8
 Requires: app-base-core => 1:2.1.27
+Requires: dmidecode
 Requires: csplugin-events
 
 %description core
@@ -56,7 +57,7 @@ fi
 if [ -x /usr/bin/eventsctl -a -S /var/lib/csplugin-events/eventsctl.socket ]; then
     /usr/bin/eventsctl -R --type REGISTRATION_UNREGISTERED --basename registration
 else
-    logger -p local6.notice -t installer 'app-registration - events system not running, unable to register custom type.'
+    logger -p local6.notice -t installer 'app-registration - events system not running, unable to register custom types.'
 fi
 
 exit 0
@@ -75,7 +76,7 @@ fi
 if [ -x /usr/bin/eventsctl -a -S /var/lib/csplugin-events/eventsctl.socket ]; then
     /usr/bin/eventsctl -D --type REGISTRATION_UNREGISTERED
 else
-    logger -p local6.notice -t installer 'app-registration - events system not running, unable to unregister custom type.'
+    logger -p local6.notice -t installer 'app-registration - events system not running, unable to unregister custom types.'
 fi
 
 exit 0

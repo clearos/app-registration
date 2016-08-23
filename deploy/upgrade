@@ -1,0 +1,4 @@
+# Add sudoers entries
+#--------------------
+
+/usr/sbin/addsudo /usr/sbin/dmidecode app-registration-core
