@@ -103,6 +103,8 @@ class Registration extends Rest
     const FILE_REGISTERED_FLAG = '/var/clearos/registration/registered';
     const FILE_VERIFIED_REPO_FLAG = '/var/clearos/registration/verified';
     const FILE_SDN_NOTICE = '/var/clearos/registration/sdn_notification';
+    const FILE_BUILD_ID = '/var/clearos/base/build.id';
+    const FILE_HOST_ID = '/var/clearos/base/host.id';
     const FILE_AUDIT = 'audit.json';
     const FOLDER_REGISTRATION = '/var/clearos/registration';
     const COMMAND_CAT = '/bin/cat';
@@ -576,8 +578,13 @@ class Registration extends Rest
             // Hardware ID/Hash
             //-----------------
             $extras['hardware_id'] = $this->_get_hardware_id();
+            $extras['build_id'] = $this->_get_build_id();
+            $extras['host_id'] = $this->_get_host_id();
+            if (!isset($this->config['opt_out_data']) || !$this->config['opt_out_data'])
+                $extras['system_info'] = $this->_get_dmi_system_info();
 
             // Locale and Version Info always get sent up in Rest calls
+            // from ClearCenter API
 
             // Opt-Out data
             //-------------
@@ -586,15 +593,14 @@ class Registration extends Rest
                 if ($file->exists()) {
                     $audit = json_decode($file->get_contents());
                     if ($audit != NULL) {
-                        // Users
-                        if (!isset($this->config['exclude_user']) || !$this->config['exclude_user'])
+                        if (!isset($this->config['opt_out_data']) || !$this->config['opt_out_data']) {
+                            // Users
                             $extras['user'] = $audit->users->weekly;
-                        // Unique IP
-                        if (!isset($this->config['exclude_ip']) || !$this->config['exclude_ip'])
+                            // Unique IP
                             $extras['ip4'] = $audit->ip4->weekly;
-                        // Unique MAC
-                        if (!isset($this->config['exclude_mac']) || !$this->config['exclude_mac'])
+                            // Unique MAC
                             $extras['mac'] = $audit->mac->weekly;
+                        }
                     }
                 }
             } catch (\Exception $e) {
@@ -701,7 +707,7 @@ class Registration extends Rest
      * @throws Engine_Exception
      */
 
-    function _set_parameter($key, $value)
+    protected function _set_parameter($key, $value)
     {
         clearos_profile(__METHOD__, __LINE__);
 
@@ -730,7 +736,7 @@ class Registration extends Rest
      * @throws Engine_Exception
      */
 
-    function _get_hardware_id()
+    private function _get_hardware_id()
     {
         clearos_profile(__METHOD__, __LINE__);
         $hardware_id = "NA";
@@ -743,6 +749,90 @@ class Registration extends Rest
             // Do nothing
         }
         return $hardware_id;
+    }
+
+    /**
+     * Fetch a build ID.
+     *
+     * On many systems, this may not exist.  The build ID is for those hardware vendors (system builders) that have deployed with
+     * ClearOS pre-installed.
+     *
+     * @return String
+     * @throws Engine_Exception
+     */
+
+    private function _get_build_id()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+        $build_id = "-";
+
+        $file = new File(self::FILE_BUILD_ID, TRUE);
+        try {
+            if ($file->exists())
+                $build_id = $file->get_contents();
+        } catch (\Exception $e) {
+            // Do nothing
+        }
+        return $build_id;
+    }
+
+    /**
+     * Fetch a host ID.
+     *
+     * On many systems, this may not exist.  The host ID is for those systems deloyed in supported virtually hosted environments, like ClearVM
+     *
+     * @return String
+     * @throws Engine_Exception
+     */
+
+    private function _get_host_id()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+        $host_id = "-";
+
+        $file = new File(self::FILE_HOST_ID, TRUE);
+        try {
+            if ($file->exists())
+                $host_id = $file->get_contents();
+        } catch (\Exception $e) {
+            // Do nothing
+        }
+        return $host_id;
+    }
+
+    /**
+     * Fetch DMI system information.
+     *
+     *
+     * @return String
+     * @throws Engine_Exception
+     */
+
+    private function _get_dmi_system_info()
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        $shell = new Shell();
+        $options['env'] = 'LANG=en_US';
+        try {
+            $shell->execute(self::COMMAND_DMIDECODE, NULL, TRUE, $options);
+            $lines = $shell->get_output();
+            $found_start = FALSE;
+            $system_info = array();
+            foreach ($lines as $line) {
+                if (preg_match("/^System Information$/", $line)) {
+                    $found_start = TRUE;
+                    continue;
+                }
+                if (preg_match("/^[^\s].*/", $line) && $found_start)
+                    break;
+                if (preg_match("/^\s*(.*):\s(.*)/", $line, $match) && $found_start)
+                    $system_info[$match[1]] = $match[2];
+            }
+        } catch (\Exception $e) {
+            // Do nothing
+        }
+        return json_encode($system_info);
     }
 
     ///////////////////////////////////////////////////////////////////////////////
