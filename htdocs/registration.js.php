@@ -7,7 +7,7 @@
  * @package    registration
  * @subpackage javascript
  * @author     ClearCenter <developer@clearcenter.com>
- * @copyright  2011 ClearCenter
+ * @copyright  2011-2016 ClearCenter
  * @license    http://www.clearcenter.com/app_license ClearCenter license
  * @link       http://www.clearcenter.com/support/documentation/clearos/registration/
  */
@@ -496,16 +496,16 @@ function check_system_info() {
         return;
 
     if ($('#system').val() == 0) {
-        $('#subscription').attr('disabled', false);
-        $('#system_name').attr('disabled', false);
+        $('#subscription').attr('readonly', false);
+        $('#system_name').attr('readonly', false);
     }
 
     var system_details = '';
     // If an upgrade/re-install, disable system name...it is inherited from previously registered system reg
     if ($('#registration_type').val() > 0) {
-        $('#system').attr('disabled', false);
+        $('#system').attr('readonly', false);
         // Disable name field...it be inherited
-        $('#system_name').attr('disabled', true);
+        $('#system_name').attr('readonly', true);
         if ($('#system').val() == 0) {
             $('#system_name').val('');
         } else {
@@ -557,7 +557,7 @@ function check_system_info() {
                 else
                     $('#theme-sidebar-container div.box-footer').html(system_details);
 
-                $('#subscription').attr('disabled', true);
+                $('#subscription').attr('readonly', true);
                 // Exit function
                 return;
             }
@@ -577,9 +577,9 @@ function check_system_info() {
                     $('#subscription').append($('<option value="' + id + '">' + my_subscriptions[id].description + '</option>'));
                 }
             }
-            $('#subscription').attr('disabled', false);
+            $('#subscription').attr('readonly', false);
         } else {
-            $('#subscription').attr('disabled', true);
+            $('#subscription').attr('readonly', true);
         }
 
         if (system_details.length) {
@@ -617,11 +617,11 @@ function check_system_info() {
                 }
             }
         } else {
-            $('#subscription').attr('disabled', true);
+            $('#subscription').attr('readonly', true);
         }
         $('#system').hide();
-        $('#system').attr('disabled', true);
-        $('#system_name').attr('disabled', false);
+        $('#system').attr('readonly', true);
+        $('#system_name').attr('readonly', false);
         // See if we can save a step by preventing duplicate names which must be unique
         for (id in my_systems) {
             if ($('#system_name').val() == my_systems[id].name)
