@@ -1,7 +1,7 @@
 
 Name: app-registration
 Epoch: 1
-Version: 2.3.1
+Version: 2.3.20
 Release: 1%{dist}
 Summary: System Registration
 License: Proprietary
@@ -91,6 +91,7 @@ exit 0
 %files core
 %defattr(-,root,root)
 %exclude /usr/clearos/apps/registration/packaging
+%exclude /usr/clearos/apps/registration/unify.json
 %dir /usr/clearos/apps/registration
 %dir /var/clearos/registration
 /usr/clearos/apps/registration/deploy
