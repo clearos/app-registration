@@ -161,6 +161,12 @@ class Registration extends Rest
                 'hardware_id' => $this->_get_hardware_id()
             );
 
+            $extras['hardware_id'] = $this->_get_hardware_id();
+            $extras['build_id'] = $this->_get_build_id();
+            $extras['host_id'] = $this->_get_host_id();
+            if (!isset($this->config['opt_out_data']) || !$this->config['opt_out_data'])
+                $extras['system_info'] = $this->_get_dmi_system_info();
+
             $result = $this->request('registration', 'register', $extras);
             $response = json_decode($result);
             if ($response->code == 0) {
