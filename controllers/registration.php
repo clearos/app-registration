@@ -92,8 +92,9 @@ class Registration extends ClearOS_Controller
         $this->form_validation->set_policy('system_name', 'registration/Registration', 'validate_system_name', $validate_system_name);
         $validate_system = ($this->input->post('validate_system')) === FALSE ? FALSE : TRUE;
         $this->form_validation->set_policy('system', 'registration/Registration', 'validate_system', $validate_system);
-        $validate_subscription = ($this->input->post('validate_subscription')) === FALSE ? FALSE : TRUE;
-        $this->form_validation->set_policy('subscription', 'registration/Registration', 'validate_subscription', $validate_subscription);
+        $validate_subscription = $this->input->post('validate_subscription');
+        if (!empty($validate_subscription))
+            $this->form_validation->set_policy('subscription', 'registration/Registration', 'validate_subscription', TRUE);
         $this->form_validation->set_policy('environment', 'registration/Registration', 'validate_environment', TRUE);
         $form_ok = $this->form_validation->run();
 
