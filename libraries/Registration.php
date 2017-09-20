@@ -462,6 +462,7 @@ class Registration extends Rest
                 'smb' => lang('registration_smb'),
                 'business' => lang('registration_business'),
                 'smb_multi' => lang('registration_smb_multi'),
+                'healthcare' => lang('registration_healthcare'),
                 'edu' => lang('registration_edu'),
                 'nfp' => lang('registration_nfp'),
                 'gov' => lang('registration_gov'),

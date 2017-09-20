@@ -26,6 +26,7 @@ $lang['registration_expiry'] = 'Expiry';
 $lang['registration_get_subscription_list'] = 'Loading subscription list...';
 $lang['registration_get_system_list'] = 'Loading system list...';
 $lang['registration_gov'] = 'Government';
+$lang['registration_healthcare'] = 'Health Care';
 $lang['registration_home'] = 'Home';
 $lang['registration_hostkey'] = 'Hostkey';
 $lang['registration_hostname_ip'] = 'External Hostname/IP';
