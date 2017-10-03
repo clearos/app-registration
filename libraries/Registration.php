@@ -109,6 +109,7 @@ class Registration extends Rest
     const FOLDER_REGISTRATION = '/var/clearos/registration';
     const COMMAND_CAT = '/bin/cat';
     const COMMAND_DMIDECODE = '/usr/sbin/dmidecode';
+    const COMMAND_IP = '/usr/sbin/ip';
     const REGISTER_NEW = 0;
     const REGISTER_EXISTING = 1;
     const CODE_SYSTEM_REGISTERED = 0;
@@ -750,8 +751,10 @@ class Registration extends Rest
 
         $shell = new Shell();
         try {
-            $shell->execute(self::COMMAND_DMIDECODE, "| grep 'ID:' | uniq | sed -e 's/.*ID://;s/ //g;s/-//g' | xargs echo -n | md5sum | awk '{ print $1 }'", TRUE);
+            $shell->execute(self::COMMAND_CAT, "/etc/machine-id");
             $hardware_id = $shell->get_last_output_line();
+            $shell->execute(self::COMMAND_IP, "addr | grep link/ether | sed -e 's/^[ \t]*//' | sort -u | cut -d' ' -f2 | xargs echo -n");
+            $hardware_id = hash('sha256', $hardware_id . " " . $shell->get_last_output_line());
         } catch (\Exception $e) {
             // Do nothing
         }
