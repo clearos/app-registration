@@ -88,11 +88,13 @@ class Registration extends ClearOS_Controller
         $this->form_validation->set_policy('sdn_form_username', 'registration/Registration', 'validate_sdn_username', TRUE);
         $this->form_validation->set_policy('sdn_form_password', 'registration/Registration', 'validate_sdn_password', TRUE);
         $this->form_validation->set_policy('registration_type', 'registration/Registration', 'validate_registration_type', TRUE);
-        $validate_system_name = ($this->input->post('validate_system_name')) === FALSE ? FALSE : TRUE;
-        $this->form_validation->set_policy('system_name', 'registration/Registration', 'validate_system_name', $validate_system_name);
-        $validate_system = ($this->input->post('validate_system')) === FALSE ? FALSE : TRUE;
-        $this->form_validation->set_policy('system', 'registration/Registration', 'validate_system', $validate_system);
-        $validate_subscription = $this->input->post('validate_subscription');
+        $validate_system_name = $this->input->post('system_name');
+        if (!empty($validate_system_name))
+            $this->form_validation->set_policy('system_name', 'registration/Registration', 'validate_system_name', TRUE);
+        $validate_system = $this->input->post('system');
+        if (!empty($validate_system))
+            $this->form_validation->set_policy('system', 'registration/Registration', 'validate_system', TRUE);
+        $validate_subscription = $this->input->post('subscription');
         if (!empty($validate_subscription))
             $this->form_validation->set_policy('subscription', 'registration/Registration', 'validate_subscription', TRUE);
         $this->form_validation->set_policy('environment', 'registration/Registration', 'validate_environment', TRUE);
