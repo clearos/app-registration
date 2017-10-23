@@ -37,6 +37,7 @@ $app['controllers']['registration']['inline_help'] = array(
 $app['core_requires'] = array(
     'app-clearcenter-core => 1:1.4.8',
     'app-base-core => 1:2.1.27',
+    'app-language-core => 1:2.3.27',
     'app-suva-core => 1:2.2.1',
     'dmidecode'
 );

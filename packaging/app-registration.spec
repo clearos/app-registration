@@ -21,6 +21,7 @@ Group: ClearOS/Libraries
 Requires: app-base-core
 Requires: app-clearcenter-core => 1:1.4.8
 Requires: app-base-core => 1:2.1.27
+Requires: app-language-core => 1:2.3.27
 Requires: app-suva-core => 1:2.2.1
 Requires: dmidecode
 Requires: csplugin-events
